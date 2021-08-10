@@ -10,13 +10,9 @@ public class Localization {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
-	
-	private String country;
-	
-	private String city;
-
-	private String wards;
-	
+	private String province;
+	private String districts;
+	private String ward;
 	private String street;
 
 	@JsonBackReference
@@ -25,17 +21,18 @@ public class Localization {
 	@JoinColumn(name = "hotelId", nullable = false)
 	private Hotel hotel;
 
-	public Localization() {	}
 
-	public Localization(String country, String city, String wards, String street) {
-		this.country = country;
-		this.city = city;
-		this.street = street;
-		this.wards = wards;
-
+	public Localization() {
 	}
 
-	//-------------------------
+	public Localization(long id, String province, String districts, String ward, String street, Hotel hotel) {
+		this.id = id;
+		this.province = province;
+		this.districts = districts;
+		this.ward = ward;
+		this.street = street;
+		this.hotel = hotel;
+	}
 
 	public long getId() {
 		return id;
@@ -45,20 +42,28 @@ public class Localization {
 		this.id = id;
 	}
 
-	public String getCountry() {
-		return country;
+	public String getProvince() {
+		return province;
 	}
 
-	public void setCountry(String country) {
-		this.country = country;
+	public void setProvince(String province) {
+		this.province = province;
 	}
 
-	public String getCity() {
-		return city;
+	public String getDistricts() {
+		return districts;
 	}
 
-	public void setCity(String city) {
-		this.city = city;
+	public void setDistricts(String districts) {
+		this.districts = districts;
+	}
+
+	public String getWard() {
+		return ward;
+	}
+
+	public void setWard(String ward) {
+		this.ward = ward;
 	}
 
 	public String getStreet() {
@@ -75,13 +80,5 @@ public class Localization {
 
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
-	}
-
-	public String getWards() {
-		return wards;
-	}
-
-	public void setWards(String wards) {
-		this.wards = wards;
 	}
 }
