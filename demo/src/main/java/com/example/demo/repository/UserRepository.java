@@ -14,4 +14,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByEmail(String email);
     User findByEmail(String email);
 
+    @Query(value = "SELECT * FROM user u join user_roles ur on u.id = ur.user_id where u.is_active = 0 and ur.role_id = 2", nativeQuery = true)
+    public List<User> findDirectorActiveFalse ();
+
+
+
+
+
 }
