@@ -55,7 +55,7 @@ public class DirectorController {
                 localization.setProvince(hotelRequest.localization.getProvince());// tỉnh thành phố
                 localization.setDistricts(hotelRequest.localization.getDistricts()); // thành phố/ quận huyện
                 localization.setWard(hotelRequest.localization.getWard()); // phường xã
-                localization.setStreet(hotelRequest.localization.getStreet()); // địa chỉ cụ thể
+                localization.setStreet(hotelRequest.localization.getStreet()); // địa chỉ cụ thể của khách sạn
                 hotel.setTypeOfHotel(hotelRequest.typeOfHotel);
                 hotel.setAdded(LocalDate.now());
                 localization.setHotel(hotel);
