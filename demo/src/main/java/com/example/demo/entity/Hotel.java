@@ -1,11 +1,14 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -42,12 +45,17 @@ public class Hotel {
     
     private boolean isActive;
 
+
+    private String typeOfHotel;
+    private LocalDateTime added;
+    private LocalDateTime updated;
+
+
     public Hotel() {
     }
-    
-    
 
-    public Hotel(long id, @NotBlank String name, double rating, @Max(5) @Min(0) float standard, Localization address, User hOwner, List<Room> rooms, List<Image> images) {
+
+    public Hotel(long id, @NotBlank String name, double rating, @Max(5) @Min(0) float standard, Localization address, User hOwner, List<Room> rooms, List<Image> images, boolean isActive, String typeOfHotel) {
         this.id = id;
         this.name = name;
         this.rating = rating;
@@ -56,6 +64,32 @@ public class Hotel {
         this.hOwner = hOwner;
         this.rooms = rooms;
         this.images = images;
+        this.isActive = isActive;
+        this.typeOfHotel = typeOfHotel;
+    }
+
+    public String getTypeOfHotel() {
+        return typeOfHotel;
+    }
+
+    public LocalDateTime getAdded() {
+        return added;
+    }
+
+    public void setAdded(LocalDateTime added) {
+        this.added = added;
+    }
+
+    public LocalDateTime getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(LocalDateTime updated) {
+        this.updated = updated;
+    }
+
+    public void setTypeOfHotel(String typeOfHotel) {
+        this.typeOfHotel = typeOfHotel;
     }
 
     public long getId() {
@@ -120,5 +154,13 @@ public class Hotel {
 
     public void setImages(List<Image> images) {
         this.images = images;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }
