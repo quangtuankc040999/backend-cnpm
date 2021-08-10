@@ -8,6 +8,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -46,7 +47,8 @@ public class Hotel {
 
 
     private String typeOfHotel;
-    private LocalDate added;
+    private LocalDateTime added;
+    private LocalDateTime updated;
 
 
     public Hotel() {
@@ -70,12 +72,20 @@ public class Hotel {
         return typeOfHotel;
     }
 
-    public LocalDate getAdded() {
+    public LocalDateTime getAdded() {
         return added;
     }
 
-    public void setAdded(LocalDate added) {
+    public void setAdded(LocalDateTime added) {
         this.added = added;
+    }
+
+    public LocalDateTime getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(LocalDateTime updated) {
+        this.updated = updated;
     }
 
     public void setTypeOfHotel(String typeOfHotel) {
