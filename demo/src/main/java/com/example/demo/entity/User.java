@@ -31,7 +31,7 @@ public class User {
     @Size(max = 120)
     private String password;
 
-    @Column(name = "Locked", nullable = false, columnDefinition = "boolean default false")
+    @Column(name = "isActive", nullable = false, columnDefinition = "boolean default false")
     private boolean isActive;
 
     @ManyToMany(fetch = FetchType.LAZY)
