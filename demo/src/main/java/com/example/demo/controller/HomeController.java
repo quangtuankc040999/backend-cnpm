@@ -7,6 +7,7 @@ import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.PasswordRequest;
 import com.example.demo.payload.request.UpdateInformationRequest;
 import com.example.demo.repository.ConfirmationTokenRepository;
+import com.example.demo.repository.UserDetailRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.GetUserFromToken;
 import com.example.demo.service.EmailSenderService;
@@ -34,6 +35,8 @@ public class HomeController {
     EmailSenderService emailSenderService;
     @Autowired
     ConfirmationTokenRepository confirmationTokenRepository;
+    @Autowired
+    UserDetailRepository userDetailRepository;
 
     // API update information
 
@@ -104,6 +107,21 @@ public class HomeController {
         return ResponseEntity.ok().body(new MessageResponse("change password successfully"));
     }
 
+    // Change Avatar
+    @PostMapping(value = "/change-avatar")
+    public ResponseEntity<?> changeAvatar(@RequestHeader("Authorization") String token,@RequestParam(name = "avatar") String avatar){
+        User user = getUserFromToken.getUserByUserNameFromJwt(token.substring(7));
+        UserDetail userDetail = user.getUserDetail();
+        try {
+            userDetail.setAvatar(avatar);
+            userDetailRepository.save(userDetail);
+            return ResponseEntity.ok().body(new MessageResponse("Change Avatar successfully"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok().body(new MessageResponse("Change Avatar false"));
+        }
+
+    }
 
 
 }
