@@ -99,7 +99,7 @@ public class DirectorController {
     }
 
     @Transactional
-    @PostMapping(value = "/hotel/{hotelId}/update/save")
+    @PostMapping(value = "/hotel/{hotelId}/update")
     public ResponseEntity<?> SaveUpdateHotel(@RequestParam("hotelRequest") String jsonHotel, @PathVariable("hotelId") Long hotelId,@RequestParam(name = "images") List<String> images ) {
         try {
             Gson gson = new Gson();
@@ -180,7 +180,7 @@ public class DirectorController {
         return ResponseEntity.ok().body(roomService.getRoomById(roomId, hotelId));
     }
     @Transactional
-    @PostMapping(value = "/hotel/{hotelId}/{roomId}/update/save")
+    @PostMapping(value = "/hotel/{hotelId}/{roomId}/update")
     public ResponseEntity<?> SaveUpdateRoom(@RequestParam("roomRequest") String jsonRoom, @PathVariable("hotelId") Long hotelId,@PathVariable("roomId") Long roomId, @RequestParam(required = false, name = "images") List<String> images ) {
         try {
             Gson gson = new Gson();

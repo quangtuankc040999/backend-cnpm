@@ -20,4 +20,11 @@ public class RoomService {
     public List<Room> getAllRoomByHotelId(Long id) {
         return roomRepository.findAllRoomByHotelId(id);
     }
+    public Room findOne(Long idRoom){
+        return roomRepository.getOne(idRoom);
+    }
+
+    public List<Room> searchRoomByCapacity(Long hotelId, int capacity){
+        return  roomRepository.searchRoomByCapacity(hotelId,capacity);
+    }
 }
