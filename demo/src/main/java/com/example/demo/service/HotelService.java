@@ -30,4 +30,8 @@ public class HotelService {
         hotelRepository.save(hotel);
         return true;
     }
+
+    public List<Hotel> findAllHotelByDirectorId(Long directorId) {
+        return hotelRepository.getAllHotelByDirectorId(directorId);
+    }
 }
