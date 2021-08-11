@@ -11,6 +11,7 @@ import com.example.demo.service.LocalizationService;
 import com.example.demo.service.RoomService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -65,7 +66,7 @@ public class DirectorController {
                 hotel.setTypeOfHotel(hotelRequest.typeOfHotel);
                 hotel.setAdded(LocalDateTime.now());
                 localization.setHotel(hotel);
-                hotel.setAddress(localization);
+                hotel.setLocalization(localization);
 
                 localizationService.saveLoacation(localization);
                 hotelService.saveHotel(hotel);
@@ -76,7 +77,7 @@ public class DirectorController {
             return  ResponseEntity.ok(new MessageResponse("add hotel successfully"));
             }catch (Exception e){
             e.printStackTrace();
-            return  ResponseEntity.ok(new MessageResponse("Up hotel Fail"));
+            return  ResponseEntity.badRequest().body(e.toString());
         }
     }
 
@@ -108,16 +109,16 @@ public class DirectorController {
             if(hotel.isActive()){
                 hotel.setStandard(hotelRequest.getStandard());
                 hotel.setName(hotelRequest.getName());
-                Localization localization = localizationService.getLocationById(hotel.getAddress().getId());
+                Localization localization = localizationService.getLocationById(hotel.getLocalization().getId());
                 localization.setProvince(hotelRequest.localization.getProvince());// tỉnh thành phố
                 localization.setDistricts(hotelRequest.localization.getDistricts()); // thành phố/ quận huyện
                 localization.setWard(hotelRequest.localization.getWard()); // phường xã
                 localization.setStreet(hotelRequest.localization.getStreet()); // địa chỉ cụ thể của khách sạn
                 localization.setStreet(hotelRequest.getLocalization().getStreet());
-                hotel.setAddress(localization);
+                hotel.setLocalization(localization);
                 hotel.setUpdated(LocalDateTime.now());
                 localizationService.saveLoacation(localization);
-                hotel.setAddress(localization);
+                hotel.setLocalization(localization);
                 imageService.deleteImgHotel(hotelId);
                 for(String image : images){
                     imageService.save(new Image(image, hotel)); // ảnh khách sạn
