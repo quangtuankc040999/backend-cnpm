@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class BookingRoom {
@@ -24,7 +25,9 @@ public class BookingRoom {
 	@OneToOne
 	private User host;
 
-	private boolean status;
+	private String status;
+
+	private LocalDateTime timeBook;
 	//======================
 
 	public long getId() {
@@ -67,11 +70,19 @@ public class BookingRoom {
 		this.end = end;
 	}
 
-	public boolean isStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(boolean status) {
+	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public LocalDateTime getTimeBook() {
+		return timeBook;
+	}
+
+	public void setTimeBook(LocalDateTime timeBook) {
+		this.timeBook = timeBook;
 	}
 }

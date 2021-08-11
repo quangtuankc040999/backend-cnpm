@@ -34,4 +34,10 @@ public class HotelService {
     public List<Hotel> findAllHotelByDirectorId(Long directorId) {
         return hotelRepository.getAllHotelByDirectorId(directorId);
     }
+
+
+    // ======================================
+    public List<Hotel> findAllHotelByProvice(String province) {
+        return hotelRepository.findAllHotelByProvice(province);
+    }
 }
