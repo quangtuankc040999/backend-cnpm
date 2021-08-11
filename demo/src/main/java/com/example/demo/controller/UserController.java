@@ -43,7 +43,7 @@ public class UserController {
     public ResponseEntity<?> bookingRoom(@RequestBody BookingRequest bookingRequest, @RequestHeader(name ="Authorization") String token) {
         try{
             long idRoom = bookingRequest.getIdRoom();
-            List<BookingRoom> bookingRoomList = bookingRoomService.findBookingOfRoomInPeriodOfTime(idRoom, bookingRequest.getStart(), bookingRequest.getEnd());
+            List<BookingRoom> bookingRoomList = bookingRoomService.findBookingOfRoomInPeriodOfTime(idRoom, bookingRequest.getStart(), bookingRequest.getEnd()); // trả về list các booking thành công hoặc đang chờ
             if(bookingRoomList.isEmpty()){
                 LocalDate from = bookingRequest.getStart();
                 LocalDate to = bookingRequest.getEnd();
