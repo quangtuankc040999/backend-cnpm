@@ -197,12 +197,15 @@ public class DirectorController {
             for(String image : images){
                 imageService.save(new Image(image, room)); // ảnh phòng
             }
+            room.setUppdate(LocalDateTime.now());
             roomService.saveRoom(room);
 
+            return ResponseEntity.ok().body(new MessageResponse("Save changes"));
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.ok().body(new MessageResponse("Update room fail "));
         }
-        return ResponseEntity.ok().body(new MessageResponse("Save changes"));
+
     }
 
 
