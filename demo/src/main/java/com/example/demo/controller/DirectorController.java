@@ -208,6 +208,23 @@ public class DirectorController {
 
     }
 
+    // ====================================================================================================================
+
+    // API get all hotel of director
+    @GetMapping("/all-hotel")
+    public ResponseEntity<?> getAllHotel(@RequestHeader("Authorization") String token){
+        Long idDirector = getUserFromToken.getUserByUserNameFromJwt(token.substring(7)).getId();
+        List<Hotel> hotels = hotelService.findAllHotelByDirectorId(idDirector);
+        return  ResponseEntity.ok().body(hotels);
+    }
+
+    @GetMapping("/{hotelId}/all-room")
+    public  ResponseEntity<?> getAllRoom(@PathVariable("hotelId") Long hotelId){
+        List<Room> rooms = roomService.getAllRoomByHotelId(hotelId);
+        return  ResponseEntity.ok().body(rooms);
+    }
+
+
 
 
 
