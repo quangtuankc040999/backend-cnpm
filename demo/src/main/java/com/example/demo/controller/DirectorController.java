@@ -3,10 +3,12 @@ package com.example.demo.controller;
 import com.example.demo.entity.*;
 import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.HotelRequest;
+import com.example.demo.payload.request.RoomRequest;
 import com.example.demo.security.jwt.GetUserFromToken;
 import com.example.demo.service.HotelService;
 import com.example.demo.service.ImageService;
 import com.example.demo.service.LocalizationService;
+import com.example.demo.service.RoomService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,8 @@ public class DirectorController {
     private HotelService hotelService;
     @Autowired
     private LocalizationService localizationService;
+    @Autowired
+    private RoomService roomService;
     /*
      *  API FOR HOTEL
      * */
@@ -71,6 +75,7 @@ public class DirectorController {
             }
             return  ResponseEntity.ok(new MessageResponse("add hotel successfully"));
             }catch (Exception e){
+            e.printStackTrace();
             return  ResponseEntity.ok(new MessageResponse("Up hotel Fail"));
         }
     }
@@ -128,6 +133,78 @@ public class DirectorController {
             return ResponseEntity.ok().body(new MessageResponse("Update Hotel fail"));
         }
     }
+
+
+
+
+    // API FOR ROOM
+    // API thêm phòng
+    @PostMapping("/hotel/{hotelId}/new-room")
+    public ResponseEntity<?> addRoom(@PathVariable("hotelId") Long hotelId,@RequestParam(name = "images") List<String> images, @RequestParam("roomRequest") String jsonRoom) {
+        try {
+            Hotel hotel = hotelService.findHotelById(hotelId);
+            if(hotel.isActive()){
+                Gson gson = new Gson();
+                RoomRequest roomRequest = gson.fromJson(jsonRoom, RoomRequest.class);
+                Room room = new Room();
+
+                for(String image : images){
+                    imageService.save(new Image(image, room)); // ảnh phòng
+                }
+                room.setHotel(hotel);
+                room.setType(roomRequest.getType());
+                room.setArea(roomRequest.getArea());
+                room.setCapacity(roomRequest.getCapacity());
+                room.setDescription(roomRequest.getDescription());
+                room.setName(roomRequest.getName());
+                room.setPrice(roomRequest.getPrice());
+                room.setAdded(LocalDateTime.now());
+                room.setUtilities(roomRequest.getUtilities());
+                roomService.saveRoom(room);
+                return ResponseEntity.ok().body(new MessageResponse("add room successfully"));
+
+            }else {
+                return ResponseEntity.ok().body(new MessageResponse("Hotel not Active"));
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.ok().body(new MessageResponse("add room false"));
+        }
+    }
+
+    // API update room
+    @GetMapping(value = "/hotel/{hotelId}/{roomId}/update")
+    public ResponseEntity<?> updateRoom(@PathVariable("roomId") Long roomId, @PathVariable("hotelId") Long hotelId) {
+        return ResponseEntity.ok().body(roomService.getRoomById(roomId, hotelId));
+    }
+    @Transactional
+    @PostMapping(value = "/hotel/{hotelId}/{roomId}/update/save")
+    public ResponseEntity<?> SaveUpdateRoom(@RequestParam("roomRequest") String jsonRoom, @PathVariable("hotelId") Long hotelId,@PathVariable("roomId") Long roomId, @RequestParam(required = false, name = "images") List<String> images ) {
+        try {
+            Gson gson = new Gson();
+            RoomRequest roomRequest = gson.fromJson(jsonRoom, RoomRequest.class) ;
+
+            Room room = roomService.getRoomById(roomId, hotelId);
+            room.setName(roomRequest.getName());
+            room.setType(roomRequest.getType());
+            room.setPrice(roomRequest.getPrice());
+            room.setDescription(roomRequest.getDescription());
+            room.setCapacity(roomRequest.getCapacity());
+            room.setArea(roomRequest.getArea());
+            imageService.deleteImgRoom(roomId);
+            room.setUtilities(roomRequest.getUtilities());
+            for(String image : images){
+                imageService.save(new Image(image, room)); // ảnh phòng
+            }
+            roomService.saveRoom(room);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok().body(new MessageResponse("Save changes"));
+    }
+
 
 
 

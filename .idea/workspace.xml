@@ -35,12 +35,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="61522516-4fe8-4c31-ac60-6b2244824a78" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/com/example/demo/controller/UserManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/com/example/demo/controller/UserManagerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/com/example/demo/repository/HotelRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/com/example/demo/repository/HotelRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/com/example/demo/service/HotelService.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/com/example/demo/service/HotelService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/com/example/demo/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/com/example/demo/service/UserService.java" afterDir="false" />
-    </list>
+    <list default="true" id="61522516-4fe8-4c31-ac60-6b2244824a78" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -72,9 +67,23 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -87,6 +96,7 @@
       <workItem from="1628640046420" duration="123000" />
       <workItem from="1628640373825" duration="25000" />
       <workItem from="1628641463086" duration="351000" />
+      <workItem from="1628642745952" duration="96000" />
     </task>
     <servers />
   </component>
@@ -106,17 +116,17 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="248" y="0" key="#Project_Structure" timestamp="1628641812945">
+    <state x="248" y="0" key="#Project_Structure" timestamp="1628642808386">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="248" y="0" key="#Project_Structure/0.0.1536.834@0.0.1536.834" timestamp="1628641812945" />
-    <state x="223" y="31" width="1089" height="803" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1628641813935">
+    <state x="248" y="0" key="#Project_Structure/0.0.1536.834@0.0.1536.834" timestamp="1628642808386" />
+    <state x="223" y="0" width="1089" height="834" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1628642808825">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="223" y="31" width="1089" height="803" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.834@0.0.1536.834" timestamp="1628641813935" />
-    <state x="498" y="208" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1628641810101">
+    <state x="223" y="0" width="1089" height="834" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.834@0.0.1536.834" timestamp="1628642808825" />
+    <state x="498" y="208" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1628642806299">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="498" y="208" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1536.834@0.0.1536.834" timestamp="1628641810101" />
+    <state x="498" y="208" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1536.834@0.0.1536.834" timestamp="1628642806299" />
   </component>
 </project>

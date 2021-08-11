@@ -15,5 +15,8 @@ public class ImageService {
     public void deleteImgHotel(Long id) {
         imageRepository.deleteHotelInImg(id);
     }
+    public void deleteImgRoom(Long id) {
+        imageRepository.deleteImgRoom(id);
+    }
 
 }

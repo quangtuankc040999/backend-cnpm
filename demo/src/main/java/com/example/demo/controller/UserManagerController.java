@@ -57,7 +57,7 @@ public class UserManagerController {
     public ResponseEntity<?> activeHotel(@PathVariable("hotelId") long hotelId){
         try {
             hotelService.activeHotel(hotelId);
-            return  ResponseEntity.ok().body(new MessageResponse("Done unlock"));
+            return  ResponseEntity.ok().body(new MessageResponse("Done unlock hotel"));
         }catch (Exception e){
            return ResponseEntity.ok().body(new MessageResponse("Can't done active hotel"));
         }
