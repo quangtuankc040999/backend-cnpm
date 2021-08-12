@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.*;
+import com.example.demo.payload.reponse.BookingResponse;
 import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.HotelRequest;
 import com.example.demo.payload.request.RoomRequest;
@@ -35,7 +36,11 @@ public class DirectorController {
     @Autowired
     private RoomService roomService;
     @Autowired
+<<<<<<< HEAD
     private CommentService commentService;
+=======
+    private BookingRoomService bookingRoomService;
+>>>>>>> feature/director
     /*
      *  API FOR HOTEL
      * */
@@ -76,7 +81,7 @@ public class DirectorController {
             return  ResponseEntity.ok(new MessageResponse("add hotel successfully"));
             }catch (Exception e){
             e.printStackTrace();
-            return  ResponseEntity.badRequest().body(e.toString());
+            return  ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -130,12 +135,13 @@ public class DirectorController {
             }
         } catch (Exception e) {
             e.printStackTrace();
+<<<<<<< HEAD
             return ResponseEntity.badRequest().body(new MessageResponse("Update hotel fail"));
+=======
+            return  ResponseEntity.badRequest().body(e.getMessage());
+>>>>>>> feature/director
         }
     }
-
-
-
 
     // API FOR ROOM
     // API thêm phòng
@@ -169,7 +175,11 @@ public class DirectorController {
 
         }catch (Exception e){
             e.printStackTrace();
+<<<<<<< HEAD
             return ResponseEntity.badRequest().body(new MessageResponse("Add room false"));
+=======
+            return  ResponseEntity.badRequest().body(e.getMessage());
+>>>>>>> feature/director
         }
     }
 
@@ -203,7 +213,7 @@ public class DirectorController {
             return ResponseEntity.ok().body(new MessageResponse("Save changes"));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok().body(new MessageResponse("Update room fail "));
+            return  ResponseEntity.badRequest().body(e.getMessage());
         }
 
     }
@@ -236,9 +246,29 @@ public class DirectorController {
         return  ResponseEntity.ok().body(rooms);
     }
 
-
-
-
-
+    // ==================ACCEPT BOOKING REQUEST ===================================
+    @GetMapping("/get-booking")
+    public  ResponseEntity<?> getAllBookingWaitting(@RequestHeader("Authorization") String token){
+        List<BookingResponse> bookingWaitting = bookingRoomService.getAllBookingWaitting(getUserFromToken.getUserByUserNameFromJwt(token.substring(7)).getId());
+       return  ResponseEntity.ok().body(bookingWaitting);
+    }
+    @PutMapping("/get-booking/accept/{bookingId}")
+    public ResponseEntity<?> accpetBooking(@PathVariable("bookingId") long bookingId){
+        try {
+            bookingRoomService.accepetedBooking(bookingId);
+            return ResponseEntity.ok().body(new MessageResponse("Done accept"));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(e.getMessage());
+        }
+    }
+    @PutMapping("/get-booking/unaccept/{bookingId}")
+    public ResponseEntity<?> unaccpetBooking(@PathVariable("bookingId") long bookingId){
+        try {
+            bookingRoomService.unaccepetedBooking(bookingId);
+            return ResponseEntity.ok().body(new MessageResponse("Done unaccept"));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(e.getMessage());
+        }
+    }
 
 }
