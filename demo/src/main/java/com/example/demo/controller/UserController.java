@@ -105,7 +105,7 @@ public class UserController {
             return  ResponseEntity.ok(new MessageResponse("comment successfully"));
 
         }else {
-            return  ResponseEntity.ok(new MessageResponse("Bạn chưa từng đặt qua phòng này"));
+            return  ResponseEntity.badRequest().body(new MessageResponse("Bạn chưa từng đặt qua phòng này"));
         }
     }
 

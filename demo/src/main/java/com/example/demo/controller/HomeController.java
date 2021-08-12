@@ -144,7 +144,7 @@ public class HomeController {
             userRepository.save(user);
             return ResponseEntity.ok().body(new MessageResponse("change password successfully"));
         } else {
-            return ResponseEntity.ok().body(new MessageResponse("current password incorrect"));
+            return ResponseEntity.badRequest().body(new MessageResponse("current password incorrect"));
         }
     }
 
