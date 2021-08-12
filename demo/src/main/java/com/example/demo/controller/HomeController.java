@@ -45,6 +45,8 @@ public class HomeController {
     HotelService hotelService;
     @Autowired
     RoomService roomService;
+    @Autowired
+    CommentService commentService;
 
     List<HotelSearchResponse> hotelSearchResponseList = new ArrayList<>();
 
@@ -66,6 +68,18 @@ public class HomeController {
                         roomList.remove(room);
                         break;
                     }
+                }
+            }
+            for(Room room : roomList){
+                if(commentService.getRateRoom(room.getId()) != null){
+                    room.setRate(commentService.getRateRoom(room.getId()).getRate());
+                    room.setNumberReview((commentService.getRateRoom(room.getId()).getTotal()));
+                    roomService.saveRoom(room);
+                }
+                else {
+                    room.setRate(0.0);
+                    room.setNumberReview(0);
+                    roomService.saveRoom(room);
                 }
             }
         }
@@ -181,7 +195,7 @@ public class HomeController {
             return ResponseEntity.ok().body(new MessageResponse("Change Avatar successfully"));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok().body(new MessageResponse("Change Avatar false"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Change Avatar false"));
         }
 
     }

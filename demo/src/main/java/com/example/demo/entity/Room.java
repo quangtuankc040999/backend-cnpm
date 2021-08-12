@@ -56,6 +56,21 @@ public class Room {
 	
 	private int capacity;
 
+
+	@JsonManagedReference(value = "comment")
+	@OneToMany(mappedBy = "room" ,fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+	private List<Comment> comments;
+
+	private  int numberReview = 0;
+
+	public int getNumberReview() {
+		return numberReview;
+	}
+
+	public void setNumberReview(int numberReview) {
+		this.numberReview = numberReview;
+	}
+
 	public Room() {
 	}
 	public long getId() {
@@ -171,7 +186,15 @@ public class Room {
 		this.utilities = utilities;
 	}
 
-	public Room(long id, double area, double price, @NotBlank String type, String name, List<BookingRoom> bookingRoom,  Hotel hotel, String description, List<Image> images, LocalDateTime added, LocalDateTime uppdate, double rate, int capacity) {
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
+	public Room(long id, double area, double price, @NotBlank String type, String name, List<BookingRoom> bookingRoom, Hotel hotel, String description, List<Image> images, LocalDateTime added, LocalDateTime uppdate, double rate, int capacity) {
 		this.id = id;
 		this.area = area;
 		this.price = price;
