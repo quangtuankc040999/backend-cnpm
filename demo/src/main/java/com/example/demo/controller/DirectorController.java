@@ -36,11 +36,8 @@ public class DirectorController {
     @Autowired
     private RoomService roomService;
     @Autowired
-<<<<<<< HEAD
     private CommentService commentService;
-=======
     private BookingRoomService bookingRoomService;
->>>>>>> feature/director
     /*
      *  API FOR HOTEL
      * */
@@ -135,11 +132,7 @@ public class DirectorController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-<<<<<<< HEAD
             return ResponseEntity.badRequest().body(new MessageResponse("Update hotel fail"));
-=======
-            return  ResponseEntity.badRequest().body(e.getMessage());
->>>>>>> feature/director
         }
     }
 
@@ -175,11 +168,7 @@ public class DirectorController {
 
         }catch (Exception e){
             e.printStackTrace();
-<<<<<<< HEAD
             return ResponseEntity.badRequest().body(new MessageResponse("Add room false"));
-=======
-            return  ResponseEntity.badRequest().body(e.getMessage());
->>>>>>> feature/director
         }
     }
 
