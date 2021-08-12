@@ -30,9 +30,7 @@ public class Room {
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
 	private List<BookingRoom> bookingRoom;
 
-	@JsonBackReference(value = "cancelBooking")
-	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
-	private List<CancelBooking> cancelBookings;
+
 
 	@JsonBackReference(value = "room")
 	@ManyToOne
@@ -57,6 +55,21 @@ public class Room {
 	private double rate = 0;
 	
 	private int capacity;
+
+
+	@JsonManagedReference(value = "comment")
+	@OneToMany(mappedBy = "room" ,fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+	private List<Comment> comments;
+
+	private  int numberReview = 0;
+
+	public int getNumberReview() {
+		return numberReview;
+	}
+
+	public void setNumberReview(int numberReview) {
+		this.numberReview = numberReview;
+	}
 
 	public Room() {
 	}
@@ -133,14 +146,6 @@ public class Room {
 		this.images = images;
 	}
 
-	public List<CancelBooking> getCancelBookings() {
-		return cancelBookings;
-	}
-
-	public void setCancelBookings(List<CancelBooking> cancelBookings) {
-		this.cancelBookings = cancelBookings;
-	}
-
 	public LocalDateTime getAdded() {
 		return added;
 	}
@@ -181,14 +186,21 @@ public class Room {
 		this.utilities = utilities;
 	}
 
-	public Room(long id, double area, double price, @NotBlank String type, String name, List<BookingRoom> bookingRoom, List<CancelBooking> cancelBookings, Hotel hotel, String description, List<Image> images, LocalDateTime added, LocalDateTime uppdate, double rate, int capacity) {
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
+	public Room(long id, double area, double price, @NotBlank String type, String name, List<BookingRoom> bookingRoom, Hotel hotel, String description, List<Image> images, LocalDateTime added, LocalDateTime uppdate, double rate, int capacity) {
 		this.id = id;
 		this.area = area;
 		this.price = price;
 		this.type = type;
 		this.name = name;
 		this.bookingRoom = bookingRoom;
-		this.cancelBookings = cancelBookings;
 		this.hotel = hotel;
 		this.description = description;
 		this.images = images;

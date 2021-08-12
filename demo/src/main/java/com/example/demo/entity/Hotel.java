@@ -29,7 +29,7 @@ public class Hotel {
 
     @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "hotel")
     @PrimaryKeyJoinColumn
-    private Localization address;
+    private Localization localization;
 
     @JsonManagedReference(value = "hotel")
     @ManyToOne
@@ -55,18 +55,7 @@ public class Hotel {
     }
 
 
-    public Hotel(long id, @NotBlank String name, double rating, @Max(5) @Min(0) float standard, Localization address, User hOwner, List<Room> rooms, List<Image> images, boolean isActive, String typeOfHotel) {
-        this.id = id;
-        this.name = name;
-        this.rating = rating;
-        this.standard = standard;
-        this.address = address;
-        this.hOwner = hOwner;
-        this.rooms = rooms;
-        this.images = images;
-        this.isActive = isActive;
-        this.typeOfHotel = typeOfHotel;
-    }
+
 
     public String getTypeOfHotel() {
         return typeOfHotel;
@@ -124,12 +113,27 @@ public class Hotel {
         this.standard = standard;
     }
 
-    public Localization getAddress() {
-        return address;
+    public Localization getLocalization() {
+        return localization;
     }
 
-    public void setAddress(Localization address) {
-        this.address = address;
+    public void setLocalization(Localization localization) {
+        this.localization = localization;
+    }
+
+    public Hotel(long id, @NotBlank String name, double rating, @Max(5) @Min(0) float standard, Localization localization, User hOwner, List<Room> rooms, List<Image> images, boolean isActive, String typeOfHotel, LocalDateTime added, LocalDateTime updated) {
+        this.id = id;
+        this.name = name;
+        this.rating = rating;
+        this.standard = standard;
+        this.localization = localization;
+        this.hOwner = hOwner;
+        this.rooms = rooms;
+        this.images = images;
+        this.isActive = isActive;
+        this.typeOfHotel = typeOfHotel;
+        this.added = added;
+        this.updated = updated;
     }
 
     public User gethOwner() {

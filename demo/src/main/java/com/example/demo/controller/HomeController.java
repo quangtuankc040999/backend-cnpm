@@ -1,22 +1,24 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.ConfirmationToken;
-import com.example.demo.entity.User;
-import com.example.demo.entity.UserDetail;
+import com.example.demo.entity.*;
+import com.example.demo.payload.reponse.HotelSearchResponse;
 import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.PasswordRequest;
+import com.example.demo.payload.request.SearchRequest;
 import com.example.demo.payload.request.UpdateInformationRequest;
 import com.example.demo.repository.ConfirmationTokenRepository;
 import com.example.demo.repository.UserDetailRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.GetUserFromToken;
-import com.example.demo.service.EmailSenderService;
-import com.example.demo.service.UserService;
+import com.example.demo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -37,6 +39,81 @@ public class HomeController {
     ConfirmationTokenRepository confirmationTokenRepository;
     @Autowired
     UserDetailRepository userDetailRepository;
+    @Autowired
+    BookingRoomService bookingRoomService;
+    @Autowired
+    HotelService hotelService;
+    @Autowired
+    RoomService roomService;
+    @Autowired
+    CommentService commentService;
+
+    List<HotelSearchResponse> hotelSearchResponseList = new ArrayList<>();
+
+    @PostMapping(value = "/search")
+    public ResponseEntity<?> search(@RequestBody SearchRequest searchRequest) {
+
+        List<Hotel> hotels = hotelService.findAllHotelByProvice(searchRequest.getProvince()); // lấy tất cả hotel trong tỉnh , thành phố
+        List<Room> roomList = new ArrayList<>();
+
+        List<BookingRoom> bookingRoomList = bookingRoomService.getAllRoomByDateBooking(searchRequest.getStart(), searchRequest.getEnd());// trả về list các booking thành công hoặc đang chờ
+
+        for (Hotel hotel: hotels) {
+            List<Room> rooms = roomService.searchRoomByCapacity(hotel.getId(), searchRequest.getCapacity());
+
+            for (Room room: rooms) {
+                roomList.add(room);
+                for (BookingRoom bk: bookingRoomList) {
+                    if(bk.getRoom().getId() == room.getId()) {
+                        roomList.remove(room);
+                        break;
+                    }
+                }
+            }
+            for(Room room : roomList){
+                if(commentService.getRateRoom(room.getId()) != null){
+                    room.setRate(commentService.getRateRoom(room.getId()).getRate());
+                    room.setNumberReview((commentService.getRateRoom(room.getId()).getTotal()));
+                    roomService.saveRoom(room);
+                }
+                else {
+                    room.setRate(0.0);
+                    room.setNumberReview(0);
+                    roomService.saveRoom(room);
+                }
+            }
+        }
+        List<Hotel> hotelList = new ArrayList<>();
+        for(Room room : roomList) {
+            Hotel hotel = room.getHotel();
+            hotelList.add(hotel);
+        }
+        for (int i = 0; i < hotelList.size(); i++ ) {
+            for (int j = i+1; j < hotelList.size(); j++) {
+                if (hotelList.get(i).getId() == hotelList.get(j).getId()) {
+                    hotelList.remove(hotelList.get(j));
+                    j--;
+                }
+            }
+        }
+        hotelSearchResponseList.clear();
+        for (Hotel hotel: hotelList) {
+            HotelSearchResponse hotelSearchResponse = new HotelSearchResponse();
+            Hotel hotel1 = hotel;
+
+            List<Room> rooms = new ArrayList<>();
+            for(Room room: roomList) {
+                if (hotel.getId() == room.getHotel().getId()) {
+                    rooms.add(room);
+                }
+            }
+            hotel1.setRooms(rooms);
+            hotelSearchResponse.setHotel(hotel1);
+            hotelSearchResponseList.add(hotelSearchResponse);
+        }
+        return ResponseEntity.ok(hotelSearchResponseList);
+    }
+    //=======================================================================================================================
 
     // API update information
 
@@ -46,7 +123,7 @@ public class HomeController {
         return ResponseEntity.ok().body(user);
     }
 
-    @PostMapping(value = "/update-information/save")
+    @PostMapping(value = "/update-information")
     public ResponseEntity<?> updateInformation(@RequestHeader("Authorization") String token, @RequestBody UpdateInformationRequest userRequest) {
         User user = getUserFromToken.getUserByUserNameFromJwt(token.substring(7));
         UserDetail userDetail = user.getUserDetail();
@@ -67,7 +144,7 @@ public class HomeController {
             userRepository.save(user);
             return ResponseEntity.ok().body(new MessageResponse("change password successfully"));
         } else {
-            return ResponseEntity.ok().body(new MessageResponse("current password incorrect"));
+            return ResponseEntity.badRequest().body(new MessageResponse("current password incorrect"));
         }
     }
 
@@ -118,7 +195,7 @@ public class HomeController {
             return ResponseEntity.ok().body(new MessageResponse("Change Avatar successfully"));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok().body(new MessageResponse("Change Avatar false"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Change Avatar false"));
         }
 
     }
