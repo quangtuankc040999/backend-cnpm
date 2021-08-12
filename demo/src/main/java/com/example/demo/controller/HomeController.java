@@ -54,7 +54,7 @@ public class HomeController {
         List<Hotel> hotels = hotelService.findAllHotelByProvice(searchRequest.getProvince()); // lấy tất cả hotel trong tỉnh , thành phố
         List<Room> roomList = new ArrayList<>();
 
-        List<BookingRoom> bookingRoomList = bookingRoomService.getAllRoomByDateBooking(searchRequest.getStart(), searchRequest.getEnd());// trả về những hotel có trạng thái waiting, wait for pay, paid. ,
+        List<BookingRoom> bookingRoomList = bookingRoomService.getAllRoomByDateBooking(searchRequest.getStart(), searchRequest.getEnd());// trả về list các booking thành công hoặc đang chờ
 
         for (Hotel hotel: hotels) {
             List<Room> rooms = roomService.searchRoomByCapacity(hotel.getId(), searchRequest.getCapacity());
