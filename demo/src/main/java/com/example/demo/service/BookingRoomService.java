@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.entity.BookingRoom;
 import com.example.demo.entity.User;
+import com.example.demo.payload.reponse.BookingResponse;
 import com.example.demo.repository.BookingRoomRepository;
 import com.example.demo.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,5 +39,22 @@ public class BookingRoomService {
     public List<BookingRoom> findBookingOfRoomInPeriodOfTime(Long room_id, LocalDate start, LocalDate end) {
         return bookingRoomRepository.findBookingOfRoomInPeriodOfTime(room_id,start, end, start, end);
     }
+
+    public List<BookingResponse> getAllBookingWaitting(Long directorId){
+        return bookingRoomRepository.getAllBookingWaitting(directorId);
+    }
+
+    public  void accepetedBooking(Long bookingId){
+        BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
+        bookingRoom.setStatus("accepted");
+        bookingRoomRepository.save(bookingRoom);
+    }
+
+    public  void unaccepetedBooking(Long bookingId){
+        BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
+        bookingRoom.setStatus("unaccepted");
+        bookingRoomRepository.save(bookingRoom);
+    }
+
 
 }

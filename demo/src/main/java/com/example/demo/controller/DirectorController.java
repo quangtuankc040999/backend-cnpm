@@ -1,14 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.*;
+import com.example.demo.payload.reponse.BookingResponse;
 import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.HotelRequest;
 import com.example.demo.payload.request.RoomRequest;
 import com.example.demo.security.jwt.GetUserFromToken;
-import com.example.demo.service.HotelService;
-import com.example.demo.service.ImageService;
-import com.example.demo.service.LocalizationService;
-import com.example.demo.service.RoomService;
+import com.example.demo.service.*;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +35,8 @@ public class DirectorController {
     private LocalizationService localizationService;
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private BookingRoomService bookingRoomService;
     /*
      *  API FOR HOTEL
      * */
@@ -135,9 +135,6 @@ public class DirectorController {
         }
     }
 
-
-
-
     // API FOR ROOM
     // API thêm phòng
     @PostMapping("/hotel/{hotelId}/new-room")
@@ -224,6 +221,35 @@ public class DirectorController {
         List<Room> rooms = roomService.getAllRoomByHotelId(hotelId);
         return  ResponseEntity.ok().body(rooms);
     }
+
+    // ==================ACCEPT BOOKING REQUEST ===================================
+    @GetMapping("/get-booking")
+    public  ResponseEntity<?> getAllBookingWaitting(@RequestHeader("Authorization") String token){
+        List<BookingResponse> bookingWaitting = bookingRoomService.getAllBookingWaitting(getUserFromToken.getUserByUserNameFromJwt(token.substring(7)).getId());
+       return  ResponseEntity.ok().body(bookingWaitting);
+    }
+    @PutMapping("/get-booking/accept/{bookingId}")
+    public ResponseEntity<?> accpetBooking(@PathVariable("bookingId") long bookingId){
+        try {
+            bookingRoomService.accepetedBooking(bookingId);
+            return ResponseEntity.ok().body(new MessageResponse("Done accept"));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(e.toString());
+        }
+    }
+    @PutMapping("/get-booking/unaccept/{bookingId}")
+    public ResponseEntity<?> unaccpetBooking(@PathVariable("bookingId") long bookingId){
+        try {
+            bookingRoomService.unaccepetedBooking(bookingId);
+            return ResponseEntity.ok().body(new MessageResponse("Done unaccept"));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(e.toString());
+        }
+    }
+
+
+
+
 
 
 
