@@ -31,4 +31,8 @@ public class RoomService {
         return  roomRepository.getAllRoomBookedByUser(userId);
     }
 
+    public Long getHotelDirectorId(Long roomId){
+        return roomRepository.getHotelDirectorId(roomId);
+    }
+
 }

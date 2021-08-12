@@ -23,4 +23,11 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             "where host_id = ? and  status = \"accepted\"" +
             "group by room_Id ", nativeQuery = true)
     List<Long> getAllRoomBookedByUser(Long userId);
+
+    //=================================================================
+    @Query (value ="select h_owner_id \n" +
+            "from hotel join room on hotel.id = room.hotel_id\n" +
+            "where room.id = ?", nativeQuery = true)
+    Long getHotelDirectorId(Long roomId);
 }
+

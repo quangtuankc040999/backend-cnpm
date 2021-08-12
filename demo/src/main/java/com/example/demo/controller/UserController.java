@@ -1,15 +1,13 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.BookingRoom;
-import com.example.demo.entity.Comment;
-import com.example.demo.entity.Room;
-import com.example.demo.entity.User;
+import com.example.demo.entity.*;
 import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.BookingRequest;
 import com.example.demo.payload.request.CommentRequest;
 import com.example.demo.security.jwt.GetUserFromToken;
 import com.example.demo.service.BookingRoomService;
 import com.example.demo.service.CommentService;
+import com.example.demo.service.NotificationService;
 import com.example.demo.service.RoomService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +34,8 @@ public class UserController {
     BookingRoomService bookingRoomService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    NotificationService notificationService;
 
     // User page
     @GetMapping(value = "/")
@@ -60,7 +60,19 @@ public class UserController {
                 roomService.saveRoom(room);
                 Date date = new Date();
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
-                return ResponseEntity.ok(new MessageResponse("Done booking"));
+                Notification notyUser = new Notification();
+                notyUser.setForUser(user.getId());
+                notyUser.setTimeNotification(LocalDateTime.now());
+                notyUser.setContent("Đơn đặt khách sạn của bạn lúc"+ LocalDateTime.now()+ " đang chờ được xử lý");
+                notificationService.save(notyUser);
+
+                Notification notyDirector = new Notification();
+                notyDirector.setForUser(roomService.getHotelDirectorId(idRoom));
+                notyDirector.setContent(" Bạn có 1 đơn đặt phòng mới chờ được xác nhận");
+                notyDirector.setTimeNotification(LocalDateTime.now());
+                notificationService.save((notyDirector));
+
+                return ResponseEntity.ok(new MessageResponse("Waiting accepted"));
             } else {
                 return ResponseEntity.badRequest().body(new MessageResponse("Can't booking this room"));
             }
