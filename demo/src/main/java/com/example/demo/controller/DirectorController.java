@@ -77,7 +77,7 @@ public class DirectorController {
             return  ResponseEntity.ok(new MessageResponse("add hotel successfully"));
             }catch (Exception e){
             e.printStackTrace();
-            return  ResponseEntity.badRequest().body(e.toString());
+            return  ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -131,7 +131,7 @@ public class DirectorController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok().body(new MessageResponse("Update Hotel fail"));
+            return  ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -167,7 +167,7 @@ public class DirectorController {
 
         }catch (Exception e){
             e.printStackTrace();
-            return ResponseEntity.ok().body(new MessageResponse("add room false"));
+            return  ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -201,7 +201,7 @@ public class DirectorController {
             return ResponseEntity.ok().body(new MessageResponse("Save changes"));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok().body(new MessageResponse("Update room fail "));
+            return  ResponseEntity.badRequest().body(e.getMessage());
         }
 
     }
@@ -234,7 +234,7 @@ public class DirectorController {
             bookingRoomService.accepetedBooking(bookingId);
             return ResponseEntity.ok().body(new MessageResponse("Done accept"));
         }catch (Exception e){
-            return ResponseEntity.ok().body(e.toString());
+            return ResponseEntity.ok().body(e.getMessage());
         }
     }
     @PutMapping("/get-booking/unaccept/{bookingId}")
@@ -243,17 +243,8 @@ public class DirectorController {
             bookingRoomService.unaccepetedBooking(bookingId);
             return ResponseEntity.ok().body(new MessageResponse("Done unaccept"));
         }catch (Exception e){
-            return ResponseEntity.ok().body(e.toString());
+            return ResponseEntity.ok().body(e.getMessage());
         }
     }
-
-
-
-
-
-
-
-
-
 
 }
