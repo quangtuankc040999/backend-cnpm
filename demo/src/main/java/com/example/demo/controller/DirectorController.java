@@ -5,10 +5,7 @@ import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.HotelRequest;
 import com.example.demo.payload.request.RoomRequest;
 import com.example.demo.security.jwt.GetUserFromToken;
-import com.example.demo.service.HotelService;
-import com.example.demo.service.ImageService;
-import com.example.demo.service.LocalizationService;
-import com.example.demo.service.RoomService;
+import com.example.demo.service.*;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +34,8 @@ public class DirectorController {
     private LocalizationService localizationService;
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private CommentService commentService;
     /*
      *  API FOR HOTEL
      * */
@@ -91,10 +90,10 @@ public class DirectorController {
                 return ResponseEntity.ok().body(hotelService.findHotelById(hotelId));
             }
             else {
-                return ResponseEntity.ok(new MessageResponse("Hotel not Active"));
+                return ResponseEntity.badRequest().body(new MessageResponse("Hotel not active"));
             }
         }catch (Exception e){
-            return  ResponseEntity.ok(new MessageResponse("No Hotel"));
+            return  ResponseEntity.badRequest().body(new MessageResponse("Not found hotel"));
         }
     }
 
@@ -127,11 +126,11 @@ public class DirectorController {
                 return ResponseEntity.ok().body(new MessageResponse("Save changes"));
 
             }else {
-                return ResponseEntity.ok(new MessageResponse("Hotel not Active"));
+                return ResponseEntity.badRequest().body(new MessageResponse("Hotel not active"));
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok().body(new MessageResponse("Update Hotel fail"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Update hotel fail"));
         }
     }
 
@@ -162,15 +161,15 @@ public class DirectorController {
                 room.setAdded(LocalDateTime.now());
                 room.setUtilities(roomRequest.getUtilities());
                 roomService.saveRoom(room);
-                return ResponseEntity.ok().body(new MessageResponse("add room successfully"));
+                return ResponseEntity.ok().body(new MessageResponse("Add room successfully"));
 
             }else {
-                return ResponseEntity.ok().body(new MessageResponse("Hotel not Active"));
+                return ResponseEntity.badRequest().body(new MessageResponse("Hotel not active"));
             }
 
         }catch (Exception e){
             e.printStackTrace();
-            return ResponseEntity.ok().body(new MessageResponse("add room false"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Add room false"));
         }
     }
 
@@ -222,6 +221,18 @@ public class DirectorController {
     @GetMapping("/{hotelId}/all-room")
     public  ResponseEntity<?> getAllRoom(@PathVariable("hotelId") Long hotelId){
         List<Room> rooms = roomService.getAllRoomByHotelId(hotelId);
+        for(Room room : rooms){
+            if(commentService.getRateRoom(room.getId()) != null){
+                room.setRate(commentService.getRateRoom(room.getId()).getRate());
+                room.setNumberReview((commentService.getRateRoom(room.getId()).getTotal()));
+                roomService.saveRoom(room);
+            }
+            else {
+                room.setRate(0.0);
+                room.setNumberReview(0);
+                roomService.saveRoom(room);
+            }
+        }
         return  ResponseEntity.ok().body(rooms);
     }
 

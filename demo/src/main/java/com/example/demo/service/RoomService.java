@@ -27,4 +27,8 @@ public class RoomService {
     public List<Room> searchRoomByCapacity(Long hotelId, int capacity){
         return  roomRepository.searchRoomByCapacity(hotelId,capacity);
     }
+    public List<Long> getAllRoomBookedByUser(Long userId){
+        return  roomRepository.getAllRoomBookedByUser(userId);
+    }
+
 }

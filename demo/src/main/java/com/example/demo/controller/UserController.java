@@ -1,13 +1,17 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.BookingRoom;
+import com.example.demo.entity.Comment;
 import com.example.demo.entity.Room;
 import com.example.demo.entity.User;
 import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.BookingRequest;
+import com.example.demo.payload.request.CommentRequest;
 import com.example.demo.security.jwt.GetUserFromToken;
 import com.example.demo.service.BookingRoomService;
+import com.example.demo.service.CommentService;
 import com.example.demo.service.RoomService;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +34,8 @@ public class UserController {
     RoomService roomService;
     @Autowired
     BookingRoomService bookingRoomService;
+    @Autowired
+    CommentService commentService;
 
     // User page
     @GetMapping(value = "/")
@@ -62,4 +69,44 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.toString());
         }
     }
+
+
+
+    // =================================== CHỨC NĂNG COMMENT ================================
+
+    //    API chức năng comment
+    @PostMapping(value ="/comment/{roomId}/post")
+    public  ResponseEntity<?> writeComment(@RequestHeader("Authorization") String token, @RequestParam("commentRequest") String jsonComment, @PathVariable("roomId") Long roomId){
+
+        String newToken = token.substring(7);
+        User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+        boolean check = false;
+        List<Long> listRoomBookedByUser = roomService.getAllRoomBookedByUser(user.getId());
+        for(Long i : listRoomBookedByUser){
+            if(roomId == i){
+                check = true;
+                break;
+            }else {
+                check = false;
+            }
+        }
+        if(check) {
+            Gson gson = new Gson();
+            CommentRequest commentRequest = gson.fromJson(jsonComment, CommentRequest.class);
+            Comment comment = new Comment();
+            comment.setRoom(roomService.findOne(roomId));
+            comment.setMessenger(commentRequest.getMessenger());
+            comment.setUserName(user.getUserDetail().getNameUserDetail());
+            comment.setUserId(user.getId());
+            comment.setAvatar(user.getUserDetail().getAvatar());
+            comment.setTimeComment(LocalDateTime.now());
+            comment.setStar(commentRequest.start);
+            commentService.saveComment(comment);
+            return  ResponseEntity.ok(new MessageResponse("comment successfully"));
+
+        }else {
+            return  ResponseEntity.ok(new MessageResponse("Bạn chưa từng đặt qua phòng này"));
+        }
+    }
+
 }
