@@ -2,6 +2,7 @@ package com.example.demo.repository;
 
 import com.example.demo.entity.BookingRoom;
 import com.example.demo.payload.reponse.BookingResponse;
+import com.example.demo.payload.reponse.InfoNotifyResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -37,6 +38,10 @@ public interface BookingRoomRepository  extends JpaRepository<BookingRoom, Long>
     @Query(value = "SELECT * FROM booking_room where id =? ", nativeQuery = true)
     BookingRoom getOneById(Long bookingId);
 
+
+    // ======================= for notification =======================
+    @Query(value = "select end, start, host_id as forUser, booking_room.id as idBooking, hotel.name as hotel, room.name as room  from booking_room join room on booking_room.room_id = room.id join hotel on room.hotel_id = hotel.id where booking_room.id = ?", nativeQuery = true)
+    InfoNotifyResponse getInforBookingByBoookingId (Long bookingId);
 
 
 

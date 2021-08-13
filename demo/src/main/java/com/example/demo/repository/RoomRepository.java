@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.Room;
+import com.example.demo.payload.reponse.InfoNotifyResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -29,5 +30,10 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             "from hotel join room on hotel.id = room.hotel_id\n" +
             "where room.id = ?", nativeQuery = true)
     Long getHotelDirectorId(Long roomId);
+    
+    // ================================== notify ============
+    @Query(value = "select hotel.name as hotel, room.name as room  from room join hotel on hotel.id = room.hotel_id\n" +
+            "where room.id = ?", nativeQuery = true)
+    InfoNotifyResponse getHotelByRoomId(Long roomId);
 }
 

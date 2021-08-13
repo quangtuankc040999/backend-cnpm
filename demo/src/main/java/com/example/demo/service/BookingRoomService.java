@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.entity.BookingRoom;
 import com.example.demo.entity.User;
 import com.example.demo.payload.reponse.BookingResponse;
+import com.example.demo.payload.reponse.InfoNotifyResponse;
 import com.example.demo.repository.BookingRoomRepository;
 import com.example.demo.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,11 @@ public class BookingRoomService {
         BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
         bookingRoom.setStatus("unaccepted");
         bookingRoomRepository.save(bookingRoom);
+    }
+
+    // ======================= noti ======================
+    public InfoNotifyResponse getInfoBooking (Long bookingId){
+        return  bookingRoomRepository.getInforBookingByBoookingId(bookingId);
     }
 
 

@@ -63,12 +63,12 @@ public class UserController {
                 Notification notyUser = new Notification();
                 notyUser.setForUser(user.getId());
                 notyUser.setTimeNotification(LocalDateTime.now());
-                notyUser.setContent("Đơn đặt khách sạn của bạn lúc"+ LocalDateTime.now()+ " đang chờ được xử lý");
+                notyUser.setContent("Đơn đặt phòng " +roomService.getHotelByRoomId(idRoom).getRoom() + " tại khách sạn " + roomService.getHotelByRoomId(idRoom).getHotel() +  " từ ngày" + from + " đến ngày " + to + " của bạn  của bạn lúc "+ LocalDateTime.now()+ " đang chờ được xử lý");
                 notificationService.save(notyUser);
 
                 Notification notyDirector = new Notification();
                 notyDirector.setForUser(roomService.getHotelDirectorId(idRoom));
-                notyDirector.setContent(" Bạn có 1 đơn đặt phòng mới chờ được xác nhận");
+                notyDirector.setContent(" Bạn có 1 đơn đặt phòng mới ở khách sạn" + roomService.getHotelByRoomId(idRoom).getHotel()  + " được xác nhận");
                 notyDirector.setTimeNotification(LocalDateTime.now());
                 notificationService.save((notyDirector));
 

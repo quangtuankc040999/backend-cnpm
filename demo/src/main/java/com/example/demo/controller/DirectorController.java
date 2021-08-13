@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.*;
 import com.example.demo.payload.reponse.BookingResponse;
+import com.example.demo.payload.reponse.InfoNotifyResponse;
 import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.HotelRequest;
 import com.example.demo.payload.request.RoomRequest;
@@ -37,8 +38,11 @@ public class DirectorController {
     private RoomService roomService;
     @Autowired
     private CommentService commentService;
+    @Autowired
     private BookingRoomService bookingRoomService;
-    /*
+    @Autowired
+    private  NotificationService notificationService;
+        /*
      *  API FOR HOTEL
      * */
     // API thêm khách sạn
@@ -245,18 +249,30 @@ public class DirectorController {
     public ResponseEntity<?> accpetBooking(@PathVariable("bookingId") long bookingId){
         try {
             bookingRoomService.accepetedBooking(bookingId);
+            InfoNotifyResponse infoNotifyResponse = bookingRoomService.getInfoBooking(bookingId);
+            Notification notification = new Notification();
+            notification.setTimeNotification(LocalDateTime.now());
+            notification.setForUser(infoNotifyResponse.getForUser());
+            notification.setContent("Đơn đặt phòng " + infoNotifyResponse.getRoom() + " tại khách sạn " + infoNotifyResponse.getHotel() + " từ ngày " + infoNotifyResponse.getStart() + " đến ngày " + infoNotifyResponse.getEnd() + " đã được xác nhận. Vui lòng xem chi tiết.");
+            notificationService.save(notification);
             return ResponseEntity.ok().body(new MessageResponse("Done accept"));
         }catch (Exception e){
-            return ResponseEntity.ok().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
     @PutMapping("/get-booking/unaccept/{bookingId}")
     public ResponseEntity<?> unaccpetBooking(@PathVariable("bookingId") long bookingId){
         try {
             bookingRoomService.unaccepetedBooking(bookingId);
+            InfoNotifyResponse infoNotifyResponse = bookingRoomService.getInfoBooking(bookingId);
+            Notification notification = new Notification();
+            notification.setTimeNotification(LocalDateTime.now());
+            notification.setForUser(infoNotifyResponse.getForUser());
+            notification.setContent("Đơn đặt phòng " + infoNotifyResponse.getRoom() + " tại khách sạn " + infoNotifyResponse.getHotel() + " từ ngày " + infoNotifyResponse.getStart() + " đến ngày " + infoNotifyResponse.getEnd() + " đã không được xác nhận. Vui lòng xem chi tiết.");
+            notificationService.save(notification);
             return ResponseEntity.ok().body(new MessageResponse("Done unaccept"));
         }catch (Exception e){
-            return ResponseEntity.ok().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
