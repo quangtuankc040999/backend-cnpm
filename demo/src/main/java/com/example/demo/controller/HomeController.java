@@ -47,6 +47,8 @@ public class HomeController {
     RoomService roomService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    NotificationService notificationService;
 
     List<HotelSearchResponse> hotelSearchResponseList = new ArrayList<>();
 
@@ -197,6 +199,20 @@ public class HomeController {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(new MessageResponse("Change Avatar false"));
         }
+
+    }
+
+    // GET NOTIFICATION
+    @GetMapping (value = "/notifications")
+    public ResponseEntity<?> getNotificationOfUser(@RequestHeader("Authorization") String token){
+        User user = getUserFromToken.getUserByUserNameFromJwt(token.substring(7));
+       try {
+          Long userId = user.getId();
+          List<Notification> notification = notificationService.getNotificationOfUser(userId);
+          return ResponseEntity.badRequest().body(notification);
+       }catch (Exception e){
+           return ResponseEntity.badRequest().body(e.getMessage());
+       }
 
     }
 

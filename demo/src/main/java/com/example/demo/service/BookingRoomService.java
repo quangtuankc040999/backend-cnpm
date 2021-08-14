@@ -29,6 +29,7 @@ public class BookingRoomService {
         bookingRoom.setHost(user);
         bookingRoom.setTimeBook(LocalDateTime.now());
         bookingRoom.setStatus(new String("waitting"));
+        bookingRoom.setComment(false);
         bookingRoomRepository.save(bookingRoom);
     }
 
@@ -61,6 +62,8 @@ public class BookingRoomService {
     public InfoNotifyResponse getInfoBooking (Long bookingId){
         return  bookingRoomRepository.getInforBookingByBoookingId(bookingId);
     }
+
+    // ====================== cancel booking =============================
 
 
 }

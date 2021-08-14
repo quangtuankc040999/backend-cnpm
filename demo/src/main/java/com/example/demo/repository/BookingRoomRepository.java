@@ -15,7 +15,7 @@ public interface BookingRoomRepository  extends JpaRepository<BookingRoom, Long>
 
     @Query(value="select * from booking_room where \n" +
             "            ((DATE(end) BETWEEN ? AND ?) or \n" +
-            "            (DATE(start) between  ? AND ? )) and (status = \"waitting\" or status = \"accepted\")", nativeQuery=true)
+            "            (DATE(start) between  ? AND ? )) and (status = \"waitting\" or status = \"accepted\" or status = \"using\")", nativeQuery=true)
     List<BookingRoom> findRoomByDateBooking(LocalDate startDate, LocalDate endDate, LocalDate startDate1, LocalDate endDate1);
 
 
@@ -27,12 +27,12 @@ public interface BookingRoomRepository  extends JpaRepository<BookingRoom, Long>
 
 
     // Get all booking waitting
-    @Query(value = "select booking_room.id as idBooking,status, user_detail.name_user_detail as host, room.name as roomName , hotel.name as hotelName, start, end, time_book, (datediff(end,start) +1 )*room.price as total\n" +
+    @Query(value = "select booking_room.id as idBooking,status, user_detail.name_user_detail as host, room.name as roomName , hotel.name as hotelName, start, end, time_book as timeBook, (datediff(end,start) +1 )*room.price as total\n" +
             "from booking_room \n" +
             "join room on room.id = booking_room.room_id\n" +
             "join hotel on hotel.id = room.hotel_id\n" +
             "join user_detail on booking_room.host_id = user_detail.user_id\n" +
-            "where booking_room.status = \"waitting\" and hotel.h_owner_id = ?", nativeQuery = true)
+            "where booking_room.status = \"waitting\" and hotel.h_owner_id = ? order by time_book desc", nativeQuery = true)
     List<BookingResponse> getAllBookingWaitting(Long directorId);
 
     @Query(value = "SELECT * FROM booking_room where id =? ", nativeQuery = true)
@@ -42,6 +42,9 @@ public interface BookingRoomRepository  extends JpaRepository<BookingRoom, Long>
     // ======================= for notification =======================
     @Query(value = "select end, start, host_id as forUser, booking_room.id as idBooking, hotel.name as hotel, room.name as room  from booking_room join room on booking_room.room_id = room.id join hotel on room.hotel_id = hotel.id where booking_room.id = ?", nativeQuery = true)
     InfoNotifyResponse getInforBookingByBoookingId (Long bookingId);
+
+    // ==================== cancel booking ==============================
+    
 
 
 

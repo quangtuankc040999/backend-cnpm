@@ -65,7 +65,6 @@ public class UserController {
                 notyUser.setTimeNotification(LocalDateTime.now());
                 notyUser.setContent("Đơn đặt phòng " +roomService.getHotelByRoomId(idRoom).getRoom() + " tại khách sạn " + roomService.getHotelByRoomId(idRoom).getHotel() +  " từ ngày" + from + " đến ngày " + to + " của bạn  của bạn lúc "+ LocalDateTime.now()+ " đang chờ được xử lý");
                 notificationService.save(notyUser);
-
                 Notification notyDirector = new Notification();
                 notyDirector.setForUser(roomService.getHotelDirectorId(idRoom));
                 notyDirector.setContent(" Bạn có 1 đơn đặt phòng mới ở khách sạn" + roomService.getHotelByRoomId(idRoom).getHotel()  + " được xác nhận");
@@ -102,7 +101,7 @@ public class UserController {
                 check = false;
             }
         }
-        if(check) {
+
             Gson gson = new Gson();
             CommentRequest commentRequest = gson.fromJson(jsonComment, CommentRequest.class);
             Comment comment = new Comment();
@@ -116,9 +115,6 @@ public class UserController {
             commentService.saveComment(comment);
             return  ResponseEntity.ok(new MessageResponse("comment successfully"));
 
-        }else {
-            return  ResponseEntity.badRequest().body(new MessageResponse("Bạn chưa từng đặt qua phòng này"));
-        }
     }
 
 }

@@ -28,6 +28,8 @@ public class BookingRoom {
 	private String status;
 
 	private LocalDateTime timeBook;
+
+	private boolean isComment;
 	//======================
 
 	public long getId() {
@@ -84,5 +86,13 @@ public class BookingRoom {
 
 	public void setTimeBook(LocalDateTime timeBook) {
 		this.timeBook = timeBook;
+	}
+
+	public boolean isComment() {
+		return isComment;
+	}
+
+	public void setComment(boolean comment) {
+		isComment = comment;
 	}
 }
