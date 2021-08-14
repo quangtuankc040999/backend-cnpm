@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.*;
+import com.example.demo.payload.reponse.BookingResponse;
 import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.BookingRequest;
 import com.example.demo.payload.request.CommentRequest;
@@ -83,6 +84,8 @@ public class UserController {
 
 
 
+
+
     // =================================== CHỨC NĂNG COMMENT ================================
 
     //    API chức năng comment
@@ -91,30 +94,22 @@ public class UserController {
 
         String newToken = token.substring(7);
         User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
-        boolean check = false;
-        List<Long> listRoomBookedByUser = roomService.getAllRoomBookedByUser(user.getId());
-        for(Long i : listRoomBookedByUser){
-            if(roomId == i){
-                check = true;
-                break;
-            }else {
-                check = false;
-            }
-        }
 
-            Gson gson = new Gson();
-            CommentRequest commentRequest = gson.fromJson(jsonComment, CommentRequest.class);
-            Comment comment = new Comment();
-            comment.setRoom(roomService.findOne(roomId));
-            comment.setMessenger(commentRequest.getMessenger());
-            comment.setUserName(user.getUserDetail().getNameUserDetail());
-            comment.setUserId(user.getId());
-            comment.setAvatar(user.getUserDetail().getAvatar());
-            comment.setTimeComment(LocalDateTime.now());
-            comment.setStar(commentRequest.start);
-            commentService.saveComment(comment);
-            return  ResponseEntity.ok(new MessageResponse("comment successfully"));
+
+        Gson gson = new Gson();
+        CommentRequest commentRequest = gson.fromJson(jsonComment, CommentRequest.class);
+        Comment comment = new Comment();
+        comment.setRoom(roomService.findOne(roomId));
+        comment.setMessenger(commentRequest.getMessenger());
+        comment.setUserName(user.getUserDetail().getNameUserDetail());
+        comment.setUserId(user.getId());
+        comment.setAvatar(user.getUserDetail().getAvatar());
+        comment.setTimeComment(LocalDateTime.now());
+        comment.setStar(commentRequest.start);
+        commentService.saveComment(comment);
+        return  ResponseEntity.ok(new MessageResponse("comment successfully"));
 
     }
+
 
 }

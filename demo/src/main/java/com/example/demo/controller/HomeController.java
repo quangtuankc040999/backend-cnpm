@@ -209,7 +209,8 @@ public class HomeController {
        try {
           Long userId = user.getId();
           List<Notification> notification = notificationService.getNotificationOfUser(userId);
-          return ResponseEntity.badRequest().body(notification);
+          return ResponseEntity.ok().body(notification);
+
        }catch (Exception e){
            return ResponseEntity.badRequest().body(e.getMessage());
        }

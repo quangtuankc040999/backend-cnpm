@@ -66,4 +66,25 @@ public class BookingRoomService {
     // ====================== cancel booking =============================
 
 
+
+    // =============================== nhận phòng =========================
+    public  List<BookingResponse> getAllBookingAcceptedStartNow (Long hotelId){
+        return bookingRoomRepository.getRoomStartNowAndAccepted(hotelId);
+    }
+    public  void checkinBooking(Long bookingId){
+        BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
+        bookingRoom.setStatus("using");
+        bookingRoomRepository.save(bookingRoom);
+
+    }
+
+    // ========================== trả phòng =======================================
+    public  List<BookingResponse> getAllRoomCheckOut (Long hotelId){
+        return bookingRoomRepository.getRoomForCheckOut(hotelId);
+    }
+    public  void checkoutBooking(Long bookingId){
+        BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
+        bookingRoom.setStatus("complete");
+        bookingRoomRepository.save(bookingRoom);
+    }
 }

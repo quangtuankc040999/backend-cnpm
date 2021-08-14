@@ -13,16 +13,17 @@ import java.util.List;
 @Repository
 public interface BookingRoomRepository  extends JpaRepository<BookingRoom, Long> {
 
+    //===================================================================for seach room============================================
     @Query(value="select * from booking_room where \n" +
             "            ((DATE(end) BETWEEN ? AND ?) or \n" +
-            "            (DATE(start) between  ? AND ? )) and (status = \"waitting\" or status = \"accepted\" or status = \"using\")", nativeQuery=true)
+            "            (DATE(start) between  ? AND ? )) and (status = \"using\" or status = \"accepted\" or status = \"waitting\")", nativeQuery=true)
     List<BookingRoom> findRoomByDateBooking(LocalDate startDate, LocalDate endDate, LocalDate startDate1, LocalDate endDate1);
 
-
+    // ==========================================for booking room=======================================================
     @Query(value = "select * from booking_room where \n" +
             "             room_id = ? and\n" +
             "            ((DATE(end) BETWEEN ? AND ? ) or \n" +
-            "            (DATE(start) between  ? AND ? )) and (status = \"waitting\" or status = \"accepted\")" , nativeQuery = true)
+            "            (DATE(start) between  ? AND ? )) and (status = \"using\" or status = \"accepted\" or status = \"waitting\")" , nativeQuery = true)
     List<BookingRoom> findBookingOfRoomInPeriodOfTime(Long room_id, LocalDate startDate, LocalDate endDate, LocalDate startDate1, LocalDate endDate1);
 
 
@@ -44,8 +45,24 @@ public interface BookingRoomRepository  extends JpaRepository<BookingRoom, Long>
     InfoNotifyResponse getInforBookingByBoookingId (Long bookingId);
 
     // ==================== cancel booking ==============================
-    
 
+
+    // ======================= nhận phòng ==================================
+    // lấy ra tất cả booking  đã được xác nhận và nhận vào ngày hôm nay của khách sạn
+    @Query(value = "select booking_room.id as idBooking, user_detail.name_user_detail as host, room.name as roomName , start, end, time_book as timeBook , status  from booking_room \n" +
+            "join room on booking_room.room_id = room.id\n" +
+            "join hotel on hotel.id = room.hotel_id\n" +
+            "join user_detail on booking_room.host_id = user_detail.user_id\n" +
+            " where status = \"accepted\" and start =  CURDATE()  and hotel_id = ?  ", nativeQuery = true)
+    List<BookingResponse> getRoomStartNowAndAccepted (Long hotelId);
+
+    // ========================= trả phòng ==================================
+    @Query(value = "select booking_room.id as idBooking, user_detail.name_user_detail as host, room.name as roomName , start, end, time_book as timeBook , status  from booking_room \n" +
+            "join room on booking_room.room_id = room.id\n" +
+            "join hotel on hotel.id = room.hotel_id\n" +
+            "join user_detail on booking_room.host_id = user_detail.user_id\n" +
+            " where status = \"using\" and end =  CURDATE()  and hotel_id = ?  ", nativeQuery = true)
+    List<BookingResponse> getRoomForCheckOut (Long hotelId);
 
 
 
