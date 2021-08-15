@@ -4,6 +4,7 @@ import com.example.demo.entity.BookingRoom;
 import com.example.demo.entity.User;
 import com.example.demo.payload.reponse.BookingResponse;
 import com.example.demo.payload.reponse.InfoNotifyResponse;
+import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.repository.BookingRoomRepository;
 import com.example.demo.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,10 @@ public class BookingRoomService {
     RoomRepository roomRepository;
     @Autowired
     BookingRoomRepository bookingRoomRepository;
+
+    public void save(BookingRoom bookingRoom){
+        bookingRoomRepository.save(bookingRoom);
+    }
 
 
     public void bookRoom(LocalDate from, LocalDate to, long id, User user) {
@@ -65,6 +70,10 @@ public class BookingRoomService {
 
     // ====================== cancel booking =============================
 
+    public  BookingRoom getOneBookingById(Long idBooking){
+        return bookingRoomRepository.getOneById(idBooking);
+    }
+
 
 
     // =============================== nhận phòng =========================
@@ -87,4 +96,30 @@ public class BookingRoomService {
         bookingRoom.setStatus("complete");
         bookingRoomRepository.save(bookingRoom);
     }
+
+
+    /*
+    *
+    * THỐNG KÊ USER
+    *
+    * */
+
+    public List<BookingResponse> getBookingWaittingUserId(Long userId){
+        return bookingRoomRepository.getBookingWaittingByUserId(userId);
+    }
+    public List<BookingResponse> getBookingUnacceptedUserId(Long userId){
+        return bookingRoomRepository.getBookingUnacceptedByUserId(userId);
+    }
+
+    public List<BookingResponse> getBookingAcceptedUserId(Long userId){
+        return bookingRoomRepository.getBookingAcceptedByUserId(userId);
+    }
+
+    public List<BookingResponse> getBookingCompleteUserId(Long userId){
+        return bookingRoomRepository.getBookingCompleteByUserId(userId);
+    }
+
+
+
+    // ======================== Comment ===============================
 }

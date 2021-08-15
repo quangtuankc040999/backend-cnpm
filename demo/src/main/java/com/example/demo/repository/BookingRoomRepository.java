@@ -65,6 +65,56 @@ public interface BookingRoomRepository  extends JpaRepository<BookingRoom, Long>
     List<BookingResponse> getRoomForCheckOut (Long hotelId);
 
 
+    /*
+    *
+    * CANCEL BOOKING
+    * */
+    @Query(value = "select * from booking_room where id = ?", nativeQuery = true)
+    BookingRoom getBookingRoomById(Long bookingId);
+
+    /*
+    *
+    * THỐNG KÊ CỦA USER
+    *
+    * */
+
+    // ===============================  WAITTING =======================
+    @Query(value = " select booking_room.id as idBooking,hotel.name as hotelName, user_detail.name_user_detail as host, room.name as roomName , start, end, time_book as timeBook , status, (datediff(end,start) +1 )*room.price as total \n" +
+            "            from booking_room \n" +
+            "            join room on booking_room.room_id = room.id\n" +
+            "            join hotel on hotel.id = room.hotel_id\n" +
+            "            join user_detail on booking_room.host_id = user_detail.user_id\n" +
+            "            where status = \"waitting\" and host_id = ? ", nativeQuery = true)
+    List<BookingResponse> getBookingWaittingByUserId(Long userId);
+
+    // ================================= UNACCEPTED ===========================
+    @Query(value = " select booking_room.id as idBooking,hotel.name as hotelName, user_detail.name_user_detail as host, room.name as roomName , start, end, time_book as timeBook , status, (datediff(end,start) +1 )*room.price as total \n" +
+            "            from booking_room \n" +
+            "            join room on booking_room.room_id = room.id\n" +
+            "            join hotel on hotel.id = room.hotel_id\n" +
+            "            join user_detail on booking_room.host_id = user_detail.user_id\n" +
+            "            where status = \"unaccepted\" and host_id = ? ", nativeQuery = true)
+    List<BookingResponse> getBookingUnacceptedByUserId(Long userId);
+
+    // =================================== ACCEPTED ===============================
+    @Query(value = " select booking_room.id as idBooking,hotel.name as hotelName, user_detail.name_user_detail as host, room.name as roomName , start, end, time_book as timeBook , status, (datediff(end,start) +1 )*room.price as total \n" +
+            "            from booking_room \n" +
+            "            join room on booking_room.room_id = room.id\n" +
+            "            join hotel on hotel.id = room.hotel_id\n" +
+            "            join user_detail on booking_room.host_id = user_detail.user_id\n" +
+            "            where status = \"accepted\" and host_id = ? ", nativeQuery = true)
+    List<BookingResponse> getBookingAcceptedByUserId(Long userId);
+
+    // ================================== COMPLETE ====================================
+    @Query(value = " select is_comment as isComment, booking_room.id as idBooking,hotel.name as hotelName, user_detail.name_user_detail as host, room.name as roomName , start, end, time_book as timeBook , status, (datediff(end,start) +1 )*room.price as total  \n" +
+            "            from booking_room \n" +
+            "            join room on booking_room.room_id = room.id\n" +
+            "            join hotel on hotel.id = room.hotel_id\n" +
+            "            join user_detail on booking_room.host_id = user_detail.user_id\n" +
+            "            where status = \"complete\" and host_id = ? ", nativeQuery = true)
+    List<BookingResponse> getBookingCompleteByUserId(Long userId);
+
+
 
 }
 

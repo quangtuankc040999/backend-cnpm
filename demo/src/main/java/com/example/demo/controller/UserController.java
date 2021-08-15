@@ -99,27 +99,110 @@ public class UserController {
     // =================================== CHỨC NĂNG COMMENT ================================
 
     //    API chức năng comment
-    @PostMapping(value ="/comment/{roomId}/post")
-    public  ResponseEntity<?> writeComment(@RequestHeader("Authorization") String token, @RequestParam("commentRequest") String jsonComment, @PathVariable("roomId") Long roomId){
+    @PostMapping(value ="/comment/{idBooking}/post")
+    public  ResponseEntity<?> writeComment(@RequestHeader("Authorization") String token, @RequestParam("commentRequest") String jsonComment, @PathVariable("idBooking") Long idBooking){
+        try {
+            BookingRoom bookingRoom = bookingRoomService.getOneBookingById(idBooking);
+            bookingRoom.setComment(true);
+            bookingRoomService.save(bookingRoom);
 
-        String newToken = token.substring(7);
-        User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
-
-
-        Gson gson = new Gson();
-        CommentRequest commentRequest = gson.fromJson(jsonComment, CommentRequest.class);
-        Comment comment = new Comment();
-        comment.setRoom(roomService.findOne(roomId));
-        comment.setMessenger(commentRequest.getMessenger());
-        comment.setUserName(user.getUserDetail().getNameUserDetail());
-        comment.setUserId(user.getId());
-        comment.setAvatar(user.getUserDetail().getAvatar());
-        comment.setTimeComment(LocalDateTime.now());
-        comment.setStar(commentRequest.start);
-        commentService.saveComment(comment);
-        return  ResponseEntity.ok(new MessageResponse("comment successfully"));
+            String newToken = token.substring(7);
+            User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            Gson gson = new Gson();
+            CommentRequest commentRequest = gson.fromJson(jsonComment, CommentRequest.class);
+            Comment comment = new Comment();
+            comment.setRoom(bookingRoom.getRoom());
+            comment.setMessenger(commentRequest.getMessenger());
+            comment.setUserName(user.getUserDetail().getNameUserDetail());
+            comment.setUserId(user.getId());
+            comment.setAvatar(user.getUserDetail().getAvatar());
+            comment.setTimeComment(LocalDateTime.now());
+            comment.setStar(commentRequest.start);
+            commentService.saveComment(comment);
+            return ResponseEntity.ok(new MessageResponse("comment successfully"));
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
     }
 
+    /*
+    *
+    * THỐNG KÊ USER
+    * */
+
+    @GetMapping(value = "/statistical/waitting")
+    public ResponseEntity<?> waittingBooking ( @RequestHeader("Authorization") String token){
+        try{
+            String newToken = token.substring(7);
+            User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            return ResponseEntity.ok().body(bookingRoomService.getBookingWaittingUserId(user.getId()));
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/statistical/unaccepted")
+    public ResponseEntity<?> unacceptedBooking ( @RequestHeader("Authorization") String token){
+        try{
+            String newToken = token.substring(7);
+            User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            return ResponseEntity.ok().body(bookingRoomService.getBookingUnacceptedUserId(user.getId()));
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/statistical/accepted")
+    public ResponseEntity<?> acceptedBooking ( @RequestHeader("Authorization") String token){
+        try{
+            String newToken = token.substring(7);
+            User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            return ResponseEntity.ok().body(bookingRoomService.getBookingAcceptedUserId(user.getId()));
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/statistical/complete")
+    public ResponseEntity<?> completeBooking ( @RequestHeader("Authorization") String token){
+        try{
+            String newToken = token.substring(7);
+            User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            return ResponseEntity.ok().body(bookingRoomService.getBookingCompleteUserId(user.getId()));
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+    /*
+    * CHỨC NĂNG HUỶ ĐẶT PHÒNG
+    * */
+    @PutMapping(value = "/cancel/{idBooking}")
+    public ResponseEntity<?> cancelBooking (@RequestHeader("Authorization") String token, @PathVariable("idBooking") Long idBooking){
+
+       try {
+           BookingRoom bookingRoom = bookingRoomService.getOneBookingById(idBooking);
+           if (bookingRoom.getStatus().equalsIgnoreCase("waitting")){
+               bookingRoom.setStatus("canceled");
+               bookingRoomService.save(bookingRoom);
+               return ResponseEntity.ok().body(new MessageResponse(" Cancel booking successfuly"));
+           }
+           else if( bookingRoom.getStatus().equalsIgnoreCase("accepted")){
+               if(bookingRoom.getStart().compareTo(LocalDate.now()) > 3) {
+                   bookingRoom.setStatus("canceled");
+                   bookingRoomService.save(bookingRoom);
+                   return ResponseEntity.ok().body(new MessageResponse(" Cancel booking successfuly"));
+               }else {
+                   return ResponseEntity.badRequest().body(new MessageResponse("Bạn chỉ có thể huỷ đặt phòng trước ngày nhận phòng tối đa 3 ngày"));
+               }
+           }else {
+               return ResponseEntity.badRequest().body(new MessageResponse("Booking status is can't cancel "));
+           }
+       }catch (Exception e){
+           return ResponseEntity.badRequest().body(e.getMessage());
+       }
+    }
 
 }
