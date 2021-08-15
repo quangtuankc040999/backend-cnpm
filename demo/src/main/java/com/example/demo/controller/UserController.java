@@ -174,6 +174,16 @@ public class UserController {
             return  ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @GetMapping(value = "/statistical/canceled")
+    public ResponseEntity<?> cancelBooking ( @RequestHeader("Authorization") String token){
+        try{
+            String newToken = token.substring(7);
+            User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            return ResponseEntity.ok().body(bookingRoomService.getBookingCancelUserId(user.getId()));
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 
     /*
