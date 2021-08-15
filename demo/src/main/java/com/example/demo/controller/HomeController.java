@@ -47,6 +47,8 @@ public class HomeController {
     RoomService roomService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    NotificationService notificationService;
 
     List<HotelSearchResponse> hotelSearchResponseList = new ArrayList<>();
 
@@ -200,5 +202,35 @@ public class HomeController {
 
     }
 
+    // GET NOTIFICATION
+    @GetMapping (value = "/notifications")
+    public ResponseEntity<?> getNotificationOfUser(@RequestHeader("Authorization") String token){
+        User user = getUserFromToken.getUserByUserNameFromJwt(token.substring(7));
+       try {
+          Long userId = user.getId();
+          List<Notification> notification = notificationService.getNotificationOfUser(userId);
+          return ResponseEntity.ok().body(notification);
+
+       }catch (Exception e){
+           return ResponseEntity.badRequest().body(e.getMessage());
+       }
+
+    }
+
+    @GetMapping (value = "/notifications/read/{idBooking}")
+    public ResponseEntity<?> getNotificationOfUserRead(@RequestHeader("Authorization") String token, @PathVariable("idBooking") Long idBooking){
+        User user = getUserFromToken.getUserByUserNameFromJwt(token.substring(7));
+        try {
+
+            Notification notification = notificationService.getToRead(idBooking);
+            notification.setRead(true);
+            notificationService.save(notification);
+            return ResponseEntity.ok().body(new MessageResponse("Đã đọc"));
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+    }
 
 }

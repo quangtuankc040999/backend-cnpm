@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.entity.BookingRoom;
 import com.example.demo.entity.User;
 import com.example.demo.payload.reponse.BookingResponse;
+import com.example.demo.payload.reponse.InfoNotifyResponse;
 import com.example.demo.repository.BookingRoomRepository;
 import com.example.demo.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class BookingRoomService {
         bookingRoom.setHost(user);
         bookingRoom.setTimeBook(LocalDateTime.now());
         bookingRoom.setStatus(new String("waitting"));
+        bookingRoom.setComment(false);
         bookingRoomRepository.save(bookingRoom);
     }
 
@@ -56,5 +58,33 @@ public class BookingRoomService {
         bookingRoomRepository.save(bookingRoom);
     }
 
+    // ======================= noti ======================
+    public InfoNotifyResponse getInfoBooking (Long bookingId){
+        return  bookingRoomRepository.getInforBookingByBoookingId(bookingId);
+    }
 
+    // ====================== cancel booking =============================
+
+
+
+    // =============================== nhận phòng =========================
+    public  List<BookingResponse> getAllBookingAcceptedStartNow (Long hotelId){
+        return bookingRoomRepository.getRoomStartNowAndAccepted(hotelId);
+    }
+    public  void checkinBooking(Long bookingId){
+        BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
+        bookingRoom.setStatus("using");
+        bookingRoomRepository.save(bookingRoom);
+
+    }
+
+    // ========================== trả phòng =======================================
+    public  List<BookingResponse> getAllRoomCheckOut (Long hotelId){
+        return bookingRoomRepository.getRoomForCheckOut(hotelId);
+    }
+    public  void checkoutBooking(Long bookingId){
+        BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
+        bookingRoom.setStatus("complete");
+        bookingRoomRepository.save(bookingRoom);
+    }
 }

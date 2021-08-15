@@ -1,15 +1,14 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.BookingRoom;
-import com.example.demo.entity.Comment;
-import com.example.demo.entity.Room;
-import com.example.demo.entity.User;
+import com.example.demo.entity.*;
+import com.example.demo.payload.reponse.BookingResponse;
 import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.BookingRequest;
 import com.example.demo.payload.request.CommentRequest;
 import com.example.demo.security.jwt.GetUserFromToken;
 import com.example.demo.service.BookingRoomService;
 import com.example.demo.service.CommentService;
+import com.example.demo.service.NotificationService;
 import com.example.demo.service.RoomService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,8 @@ public class UserController {
     BookingRoomService bookingRoomService;
     @Autowired
     CommentService commentService;
+    @Autowired
+   NotificationService notificationService;
 
     // User page
     @GetMapping(value = "/")
@@ -56,11 +57,36 @@ public class UserController {
                 LocalDate to = bookingRequest.getEnd();
                 Room room = roomService.findOne(idRoom);
                 User user = getUserFromToken.getUserByUserNameFromJwt(token.substring(7));
+
+                Notification notyUser = new Notification();
+                notyUser.setForUser(user.getId());
+                notyUser.setTimeNotification(LocalDateTime.now());
+                notyUser.setHotelName(roomService.getHotelByRoomId(idRoom).getHotel());
+                notyUser.setHotelId(roomService.getHotelByRoomId(idRoom).getHotelId());
+                notyUser.setStart(from.toString());
+                notyUser.setEnd(to.toString());
+                notyUser.setContent("Đơn đặt hàng đang chờ xác nhận");
+                notyUser.setRoomName(roomService.getHotelByRoomId(idRoom).getRoom());
+                notyUser.setRead(false);
+                notificationService.save(notyUser);
+
+                Notification notyDirector = new Notification();
+                notyDirector.setForUser(roomService.getHotelDirectorId(idRoom));
+                notyDirector.setContent("Có 1 đơn đặt phòng đang chờ xác nhận");
+                notyDirector.setTimeNotification(LocalDateTime.now());
+                notyDirector.setHotelId(roomService.getHotelByRoomId(idRoom).getHotelId());
+                notyDirector.setHotelName(roomService.getHotelByRoomId(idRoom).getHotel());
+                notyDirector.setRoomName(roomService.getHotelByRoomId(idRoom).getRoom());
+                notyDirector.setRead(false);
+                notificationService.save((notyDirector));
+
                 bookingRoomService.bookRoom(from, to, idRoom, user); // luu vao bang booking room
                 roomService.saveRoom(room);
                 Date date = new Date();
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
-                return ResponseEntity.ok(new MessageResponse("Done booking"));
+
+
+                return ResponseEntity.ok(new MessageResponse("Waiting accepted"));
             } else {
                 return ResponseEntity.badRequest().body(new MessageResponse("Can't booking this room"));
             }
@@ -70,8 +96,6 @@ public class UserController {
         }
     }
 
-
-
     // =================================== CHỨC NĂNG COMMENT ================================
 
     //    API chức năng comment
@@ -80,33 +104,22 @@ public class UserController {
 
         String newToken = token.substring(7);
         User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
-        boolean check = false;
-        List<Long> listRoomBookedByUser = roomService.getAllRoomBookedByUser(user.getId());
-        for(Long i : listRoomBookedByUser){
-            if(roomId == i){
-                check = true;
-                break;
-            }else {
-                check = false;
-            }
-        }
-        if(check) {
-            Gson gson = new Gson();
-            CommentRequest commentRequest = gson.fromJson(jsonComment, CommentRequest.class);
-            Comment comment = new Comment();
-            comment.setRoom(roomService.findOne(roomId));
-            comment.setMessenger(commentRequest.getMessenger());
-            comment.setUserName(user.getUserDetail().getNameUserDetail());
-            comment.setUserId(user.getId());
-            comment.setAvatar(user.getUserDetail().getAvatar());
-            comment.setTimeComment(LocalDateTime.now());
-            comment.setStar(commentRequest.start);
-            commentService.saveComment(comment);
-            return  ResponseEntity.ok(new MessageResponse("comment successfully"));
 
-        }else {
-            return  ResponseEntity.badRequest().body(new MessageResponse("Bạn chưa từng đặt qua phòng này"));
-        }
+
+        Gson gson = new Gson();
+        CommentRequest commentRequest = gson.fromJson(jsonComment, CommentRequest.class);
+        Comment comment = new Comment();
+        comment.setRoom(roomService.findOne(roomId));
+        comment.setMessenger(commentRequest.getMessenger());
+        comment.setUserName(user.getUserDetail().getNameUserDetail());
+        comment.setUserId(user.getId());
+        comment.setAvatar(user.getUserDetail().getAvatar());
+        comment.setTimeComment(LocalDateTime.now());
+        comment.setStar(commentRequest.start);
+        commentService.saveComment(comment);
+        return  ResponseEntity.ok(new MessageResponse("comment successfully"));
+
     }
+
 
 }

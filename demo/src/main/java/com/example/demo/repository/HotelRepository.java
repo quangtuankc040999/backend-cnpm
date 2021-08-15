@@ -20,4 +20,7 @@ public interface HotelRepository  extends JpaRepository<Hotel,Long > {
     @Query(value="SELECT * FROM hotel  join localization on hotel.id = localization.hotel_id where localization.province like  %? ", nativeQuery=true)
     List<Hotel> findAllHotelByProvice (String province);
 
+
+
+
 }

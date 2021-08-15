@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.*;
 import com.example.demo.payload.reponse.BookingResponse;
+import com.example.demo.payload.reponse.InfoNotifyResponse;
 import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.HotelRequest;
 import com.example.demo.payload.request.RoomRequest;
@@ -37,8 +38,11 @@ public class DirectorController {
     private RoomService roomService;
     @Autowired
     private CommentService commentService;
+    @Autowired
     private BookingRoomService bookingRoomService;
-    /*
+    @Autowired
+    private  NotificationService notificationService;
+        /*
      *  API FOR HOTEL
      * */
     // API thêm khách sạn
@@ -245,19 +249,93 @@ public class DirectorController {
     public ResponseEntity<?> accpetBooking(@PathVariable("bookingId") long bookingId){
         try {
             bookingRoomService.accepetedBooking(bookingId);
+            InfoNotifyResponse infoNotifyResponse = bookingRoomService.getInfoBooking(bookingId);
+            Notification notification = new Notification();
+            notification.setTimeNotification(LocalDateTime.now());
+            notification.setForUser(infoNotifyResponse.getForUser());
+            notification.setContent("Đơn đặt phòng đã được xác nhận. Chi tiết");
+            notification.setRoomName(infoNotifyResponse.getRoom());
+            notification.setHotelName(infoNotifyResponse.getHotel());
+            notification.setStart(infoNotifyResponse.getStart().toString());
+            notification.setEnd(infoNotifyResponse.getEnd().toString());
+            notification.setRead(false);
+            notificationService.save(notification);
             return ResponseEntity.ok().body(new MessageResponse("Done accept"));
         }catch (Exception e){
-            return ResponseEntity.ok().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+
         }
     }
     @PutMapping("/get-booking/unaccept/{bookingId}")
     public ResponseEntity<?> unaccpetBooking(@PathVariable("bookingId") long bookingId){
         try {
             bookingRoomService.unaccepetedBooking(bookingId);
+            InfoNotifyResponse infoNotifyResponse = bookingRoomService.getInfoBooking(bookingId);
+            Notification notification = new Notification();
+            notification.setTimeNotification(LocalDateTime.now());
+            notification.setForUser(infoNotifyResponse.getForUser());
+            notification.setContent("Đơn đặt phòng bị từ chối. Chi tiết");
+            notification.setRoomName(infoNotifyResponse.getRoom());
+            notification.setHotelName(infoNotifyResponse.getHotel());
+            notification.setStart(infoNotifyResponse.getStart().toString());
+            notification.setEnd(infoNotifyResponse.getEnd().toString());
+            notification.setRead(false);
+            notificationService.save(notification);
             return ResponseEntity.ok().body(new MessageResponse("Done unaccept"));
         }catch (Exception e){
-            return ResponseEntity.ok().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
+
+    // ============================ Chức năng nhận phòng ============================================
+
+    // api lấy toàn bộ phòng để checkin
+    @GetMapping(value = "/checkin/{hotelId}")
+    public  ResponseEntity<?> getAllRoomToCheckIn (@RequestHeader("Authorization") String token, @PathVariable("hotelId") Long hotelId){
+        String newToken = token.substring(7);
+        User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+        try {
+            List<BookingResponse> allBookingCanCheckin = bookingRoomService.getAllBookingAcceptedStartNow(hotelId);
+            return ResponseEntity.ok(allBookingCanCheckin);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping(value = "/checkin/{bookingId}")
+    public ResponseEntity<?> checkIn (@PathVariable("bookingId") long bookingId){
+        try {
+            bookingRoomService.checkinBooking(bookingId);
+            return  ResponseEntity.ok().body(new MessageResponse("Check in sussesfully"));
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // ===================================== Chức năng trả phòng ========================================
+
+    @GetMapping(value = "/checkout/{hotelId}")
+    public  ResponseEntity<?> getAllRoomToCheckOut (@RequestHeader("Authorization") String token, @PathVariable("hotelId") Long hotelId){
+        String newToken = token.substring(7);
+        User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+        try {
+            List<BookingResponse> allBookingCanCheckOut = bookingRoomService.getAllRoomCheckOut(hotelId);
+            return ResponseEntity.ok(allBookingCanCheckOut);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PutMapping(value = "/checkout/{bookingId}")
+    public ResponseEntity<?> checkout (@PathVariable("bookingId") long bookingId){
+        try {
+            bookingRoomService.checkoutBooking(bookingId);
+            return  ResponseEntity.ok().body(new MessageResponse("Check out sussesfully"));
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
 }
