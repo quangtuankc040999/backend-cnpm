@@ -12,4 +12,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query(value = "SELECT * FROM notification where for_user = ? order by time_notification desc", nativeQuery = true)
     List<Notification> getNotificationOfUser(Long userId);
 
+    @Query(value = "SELECT * FROM notification where id = ? ", nativeQuery = true)
+    Notification getOneNotificationOfUserForRead(Long bookingId);
+
 }

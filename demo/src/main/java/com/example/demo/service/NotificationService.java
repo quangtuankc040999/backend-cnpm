@@ -19,4 +19,8 @@ public class NotificationService {
     public List<Notification> getNotificationOfUser(Long userId){
         return notificationRepository.getNotificationOfUser(userId);
     }
+
+    public  Notification getToRead(Long bookingId){
+        return  notificationRepository.getOneNotificationOfUserForRead(bookingId);
+    }
 }

@@ -9,5 +9,6 @@ public interface InfoNotifyResponse {
     public LocalDate getStart();
     public LocalDate getEnd();
     public Long  getForUser();
+    public Long getHotelId();
 
 }

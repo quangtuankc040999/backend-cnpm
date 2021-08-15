@@ -32,7 +32,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     Long getHotelDirectorId(Long roomId);
     
     // ================================== notify ============
-    @Query(value = "select hotel.name as hotel, room.name as room  from room join hotel on hotel.id = room.hotel_id\n" +
+    @Query(value = "select hotel.id as hotelId , hotel.name as hotel, room.name as room  from room join hotel on hotel.id = room.hotel_id\n" +
             "where room.id = ?", nativeQuery = true)
     InfoNotifyResponse getHotelByRoomId(Long roomId);
 }

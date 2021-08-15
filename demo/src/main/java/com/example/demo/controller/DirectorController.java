@@ -253,7 +253,12 @@ public class DirectorController {
             Notification notification = new Notification();
             notification.setTimeNotification(LocalDateTime.now());
             notification.setForUser(infoNotifyResponse.getForUser());
-            notification.setContent("Đơn đặt phòng " + infoNotifyResponse.getRoom() + " tại khách sạn " + infoNotifyResponse.getHotel() + " từ ngày " + infoNotifyResponse.getStart() + " đến ngày " + infoNotifyResponse.getEnd() + " đã được xác nhận. Vui lòng xem chi tiết.");
+            notification.setContent("Đơn đặt phòng đã được xác nhận. Chi tiết");
+            notification.setRoomName(infoNotifyResponse.getRoom());
+            notification.setHotelName(infoNotifyResponse.getHotel());
+            notification.setStart(infoNotifyResponse.getStart().toString());
+            notification.setEnd(infoNotifyResponse.getEnd().toString());
+            notification.setRead(false);
             notificationService.save(notification);
             return ResponseEntity.ok().body(new MessageResponse("Done accept"));
         }catch (Exception e){
@@ -269,7 +274,12 @@ public class DirectorController {
             Notification notification = new Notification();
             notification.setTimeNotification(LocalDateTime.now());
             notification.setForUser(infoNotifyResponse.getForUser());
-            notification.setContent("Đơn đặt phòng " + infoNotifyResponse.getRoom() + " tại khách sạn " + infoNotifyResponse.getHotel() + " từ ngày " + infoNotifyResponse.getStart() + " đến ngày " + infoNotifyResponse.getEnd() + " đã không được xác nhận. Vui lòng xem chi tiết.");
+            notification.setContent("Đơn đặt phòng bị từ chối. Chi tiết");
+            notification.setRoomName(infoNotifyResponse.getRoom());
+            notification.setHotelName(infoNotifyResponse.getHotel());
+            notification.setStart(infoNotifyResponse.getStart().toString());
+            notification.setEnd(infoNotifyResponse.getEnd().toString());
+            notification.setRead(false);
             notificationService.save(notification);
             return ResponseEntity.ok().body(new MessageResponse("Done unaccept"));
         }catch (Exception e){
@@ -321,7 +331,7 @@ public class DirectorController {
     public ResponseEntity<?> checkout (@PathVariable("bookingId") long bookingId){
         try {
             bookingRoomService.checkoutBooking(bookingId);
-            return  ResponseEntity.ok().body(new MessageResponse("Check in sussesfully"));
+            return  ResponseEntity.ok().body(new MessageResponse("Check out sussesfully"));
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -36,7 +36,7 @@ public class UserController {
     @Autowired
     CommentService commentService;
     @Autowired
-    NotificationService notificationService;
+   NotificationService notificationService;
 
     // User page
     @GetMapping(value = "/")
@@ -57,20 +57,34 @@ public class UserController {
                 LocalDate to = bookingRequest.getEnd();
                 Room room = roomService.findOne(idRoom);
                 User user = getUserFromToken.getUserByUserNameFromJwt(token.substring(7));
+
+                Notification notyUser = new Notification();
+                notyUser.setForUser(user.getId());
+                notyUser.setTimeNotification(LocalDateTime.now());
+                notyUser.setHotelName(roomService.getHotelByRoomId(idRoom).getHotel());
+                notyUser.setHotelId(roomService.getHotelByRoomId(idRoom).getHotelId());
+                notyUser.setStart(from.toString());
+                notyUser.setEnd(to.toString());
+                notyUser.setContent("Đơn đặt hàng đang chờ xác nhận");
+                notyUser.setRoomName(roomService.getHotelByRoomId(idRoom).getRoom());
+                notyUser.setRead(false);
+                notificationService.save(notyUser);
+
+                Notification notyDirector = new Notification();
+                notyDirector.setForUser(roomService.getHotelDirectorId(idRoom));
+                notyDirector.setContent("Có 1 đơn đặt phòng đang chờ xác nhận");
+                notyDirector.setTimeNotification(LocalDateTime.now());
+                notyDirector.setHotelId(roomService.getHotelByRoomId(idRoom).getHotelId());
+                notyDirector.setHotelName(roomService.getHotelByRoomId(idRoom).getHotel());
+                notyDirector.setRoomName(roomService.getHotelByRoomId(idRoom).getRoom());
+                notyDirector.setRead(false);
+                notificationService.save((notyDirector));
+
                 bookingRoomService.bookRoom(from, to, idRoom, user); // luu vao bang booking room
                 roomService.saveRoom(room);
                 Date date = new Date();
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
-                Notification notyUser = new Notification();
-                notyUser.setForUser(user.getId());
-                notyUser.setTimeNotification(LocalDateTime.now());
-                notyUser.setContent("Đơn đặt phòng " +roomService.getHotelByRoomId(idRoom).getRoom() + " tại khách sạn " + roomService.getHotelByRoomId(idRoom).getHotel() +  " từ ngày" + from + " đến ngày " + to + " của bạn  của bạn lúc "+ LocalDateTime.now()+ " đang chờ được xử lý");
-                notificationService.save(notyUser);
-                Notification notyDirector = new Notification();
-                notyDirector.setForUser(roomService.getHotelDirectorId(idRoom));
-                notyDirector.setContent(" Bạn có 1 đơn đặt phòng mới ở khách sạn" + roomService.getHotelByRoomId(idRoom).getHotel()  + " được xác nhận");
-                notyDirector.setTimeNotification(LocalDateTime.now());
-                notificationService.save((notyDirector));
+
 
                 return ResponseEntity.ok(new MessageResponse("Waiting accepted"));
             } else {
@@ -81,10 +95,6 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.toString());
         }
     }
-
-
-
-
 
     // =================================== CHỨC NĂNG COMMENT ================================
 

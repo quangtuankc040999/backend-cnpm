@@ -39,4 +39,6 @@ public class RoomService {
     public InfoNotifyResponse getHotelByRoomId (Long roomId){
         return  roomRepository.getHotelByRoomId(roomId);
     }
+
+
 }
