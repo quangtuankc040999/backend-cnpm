@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Room;
+import com.example.demo.payload.reponse.InfoNotifyResponse;
 import com.example.demo.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,5 +31,14 @@ public class RoomService {
     public List<Long> getAllRoomBookedByUser(Long userId){
         return  roomRepository.getAllRoomBookedByUser(userId);
     }
+
+    public Long getHotelDirectorId(Long roomId){
+        return roomRepository.getHotelDirectorId(roomId);
+    }
+
+    public InfoNotifyResponse getHotelByRoomId (Long roomId){
+        return  roomRepository.getHotelByRoomId(roomId);
+    }
+
 
 }
