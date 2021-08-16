@@ -184,6 +184,16 @@ public class UserController {
             return  ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @GetMapping(value = "/statistical")
+    public ResponseEntity<?> allBooking ( @RequestHeader("Authorization") String token){
+        try{
+            String newToken = token.substring(7);
+            User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            return ResponseEntity.ok().body(bookingRoomService.getBookingUserId(user.getId()));
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 
     /*
@@ -214,5 +224,8 @@ public class UserController {
            return ResponseEntity.badRequest().body(e.getMessage());
        }
     }
+
+
+
 
 }

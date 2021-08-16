@@ -233,4 +233,37 @@ public class HomeController {
 
     }
 
+
+    /*
+     * GET HOTEL BY HOTEL ID
+     * */
+    @GetMapping(value = "/hotel/{hotelId}")
+    public ResponseEntity<?> getHotelById(@PathVariable("hotelId") Long hotelId){
+        try{
+            Hotel hotel = hotelService.findHotelById(hotelId);
+            return ResponseEntity.ok().body(hotel);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/room/{roomId}")
+    public ResponseEntity<?> getRoomById(@PathVariable("roomId") Long roomId){
+        try{
+            Room room = roomService.getRoomById(roomId);
+            return ResponseEntity.ok().body(room);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/booking/{bookingId}")
+    public ResponseEntity<?> getBookingById(@PathVariable("bookingId") Long bookingId){
+        try{
+            BookingRoom bookingRoom = bookingRoomService.getOneBookingById(bookingId);
+            return ResponseEntity.ok().body(bookingRoom);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

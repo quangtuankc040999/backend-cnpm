@@ -21,6 +21,7 @@ public class RoomService {
     public List<Room> getAllRoomByHotelId(Long id) {
         return roomRepository.findAllRoomByHotelId(id);
     }
+
     public Room findOne(Long idRoom){
         return roomRepository.getOne(idRoom);
     }
@@ -38,6 +39,10 @@ public class RoomService {
 
     public InfoNotifyResponse getHotelByRoomId (Long roomId){
         return  roomRepository.getHotelByRoomId(roomId);
+    }
+
+    public  Room getRoomById(Long idRoom){
+       return roomRepository.findOneByRoomId(idRoom);
     }
 
 

@@ -14,4 +14,6 @@ public interface  BookingResponse {
     Long getTotal();
     String getStatus();
     boolean getIsComment();
+    Long getRoomId();
+    Long getHotelId();
 }

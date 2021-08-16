@@ -122,7 +122,9 @@ public class BookingRoomService {
     public List<BookingResponse> getBookingCancelUserId(Long userId){
         return bookingRoomRepository.getBookingCancelByUserId(userId);
     }
-
+    public List<BookingResponse> getBookingUserId(Long userId){
+        return bookingRoomRepository.getBookingByUserId(userId);
+    }
 
 
     // ======================== Comment ===============================
