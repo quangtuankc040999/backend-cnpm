@@ -13,4 +13,7 @@ public interface  BookingResponse {
     LocalDateTime getTimeBook();
     Long getTotal();
     String getStatus();
+    boolean getIsComment();
+    Long getRoomId();
+    Long getHotelId();
 }

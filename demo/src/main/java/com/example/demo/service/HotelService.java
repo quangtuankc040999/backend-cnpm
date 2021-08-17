@@ -15,9 +15,11 @@ public class HotelService {
     private HotelRepository hotelRepository;
 
     public void saveHotel(Hotel hotel){hotelRepository.save(hotel);}
+
     public  Hotel  findHotelById (long id){
         return  hotelRepository.findById(id);
     }
+
 
     // Active hotel
     public List<Hotel> getHotelIsActiveFalse(){

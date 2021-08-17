@@ -13,6 +13,9 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query(value="select * from room where id= ? and hotel_id = ?", nativeQuery=true)
     Room findOneById(Long roomid, Long hotelid);
 
+    @Query(value="select * from room where id= ? ", nativeQuery=true)
+    Room findOneByRoomId(Long roomid);
+
     @Query(value="select * from room where hotel_id= ?", nativeQuery=true)
     List<Room> findAllRoomByHotelId(Long id);
 
