@@ -1,9 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.*;
-import com.example.demo.payload.reponse.BookingResponse;
-import com.example.demo.payload.reponse.InfoNotifyResponse;
-import com.example.demo.payload.reponse.MessageResponse;
+import com.example.demo.payload.reponse.*;
 import com.example.demo.payload.request.HotelRequest;
 import com.example.demo.payload.request.RoomRequest;
 import com.example.demo.security.jwt.GetUserFromToken;
@@ -332,6 +330,65 @@ public class DirectorController {
         try {
             bookingRoomService.checkoutBooking(bookingId);
             return  ResponseEntity.ok().body(new MessageResponse("Check out sussesfully"));
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+    /*
+    *
+    * THỐNG KÊ CỦA DIRECTOR
+    *
+    * */
+    @GetMapping(value = "/statistical/all")
+    public ResponseEntity<?> thongKeChung (@RequestHeader("Authorization") String token){
+        try {
+            String newToken = token.substring(7);
+            User director = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            Long directorId = director.getId();
+
+            ThongKeDirectorChung thongKeDirectorChung = new ThongKeDirectorChung();
+            thongKeDirectorChung.setBookingInDay(bookingRoomService.soDonDatPhongTrongNgay(directorId));
+            thongKeDirectorChung.setTotalBookingInMonth(bookingRoomService.soDonDatPhongTrongThang(directorId));
+            thongKeDirectorChung.setTotalSalesInMonth(bookingRoomService.tongDoanhThuTrongThang(directorId));
+            thongKeDirectorChung.setDirectorId(directorId);
+            return  ResponseEntity.ok().body(thongKeDirectorChung);
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @GetMapping(value = "/statistical/{hotelId}")
+    public ResponseEntity<?> thongKeChung (@RequestHeader("Authorization") String token, @PathVariable("hotelId") Long hotelId){
+        try {
+            String newToken = token.substring(7);
+            User director = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            Long directorId = director.getId();
+
+            ThongKeDirectorChung thongKeDirectorChung = new ThongKeDirectorChung();
+            thongKeDirectorChung.setBookingInDay(bookingRoomService.soDonDatPhongTrongNgayKS(directorId,hotelId));
+            thongKeDirectorChung.setTotalBookingInMonth(bookingRoomService.soDonDatPhongTrongThangKS(directorId, hotelId));
+            thongKeDirectorChung.setTotalSalesInMonth(bookingRoomService.tongDoanhThuTrongThangKS(directorId,hotelId));
+            thongKeDirectorChung.setDirectorId(directorId);
+            thongKeDirectorChung.setHotelId(hotelId);
+            return  ResponseEntity.ok().body(thongKeDirectorChung);
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/statistical/{hotelId}/{year}")
+    public ResponseEntity<?> thongKeDoanhThuVeBieuDo (@RequestHeader("Authorization") String token, @PathVariable("hotelId") Long hotelId, @PathVariable("year") int year){
+        try {
+            String newToken = token.substring(7);
+            User director = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            Long directorId = director.getId();
+
+            List<ThongKeDoanhThuDirector> doanhThu = bookingRoomService.thongKeDoanhThuDeVeBieuDo(hotelId,directorId,year);
+            return  ResponseEntity.ok().body(doanhThu);
+
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

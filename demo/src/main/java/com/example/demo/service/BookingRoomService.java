@@ -5,6 +5,7 @@ import com.example.demo.entity.User;
 import com.example.demo.payload.reponse.BookingResponse;
 import com.example.demo.payload.reponse.InfoNotifyResponse;
 import com.example.demo.payload.reponse.MessageResponse;
+import com.example.demo.payload.reponse.ThongKeDoanhThuDirector;
 import com.example.demo.repository.BookingRoomRepository;
 import com.example.demo.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,5 +128,34 @@ public class BookingRoomService {
     }
 
 
-    // ======================== Comment ===============================
+    /*
+    *
+    * THỐNG KÊ DIRECTOR
+    *
+    * */
+
+    // =========================Tất cả khách sạn của director =============================
+    public  Long soDonDatPhongTrongNgay (Long directorId){
+        return  bookingRoomRepository.soDonDatPhongMoiTrongNgay(directorId);
+    }
+    public  Long soDonDatPhongTrongThang (Long directorId){
+        return  bookingRoomRepository.soDonDatPhongTrongThang(directorId);
+    }
+    public  Long tongDoanhThuTrongThang (Long directorId){
+        return  bookingRoomRepository.tongDoanhThuTrongThang(directorId);
+    }
+    // =============== từng khách sạn ==============================
+    public  Long soDonDatPhongTrongNgayKS (Long directorId, Long hotelId){
+        return  bookingRoomRepository.soDonDatPhongMoiTrongNgayKS(directorId, hotelId);
+    }
+    public  Long soDonDatPhongTrongThangKS (Long directorId,Long hotelId){
+        return  bookingRoomRepository.soDonDatPhongTrongThangKS(directorId, hotelId);
+    }
+    public  Long tongDoanhThuTrongThangKS (Long directorId,Long hotelId){
+        return  bookingRoomRepository.tongDoanhThuTrongThangKS(directorId, hotelId);
+    }
+
+    public  List<ThongKeDoanhThuDirector> thongKeDoanhThuDeVeBieuDo (Long hotelId, Long directorId, int year){
+        return bookingRoomRepository.thongKeDoanhThuDeVeBieuDo(hotelId,directorId,year);
+    }
 }
