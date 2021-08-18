@@ -2,19 +2,19 @@ package com.example.demo.payload.request;
 
 public class CommentRequest {
         public String messenger;
-    public float start;
+    public float stars;
 
     public float getStart() {
-        return start;
+        return stars;
     }
 
-    public void setStart(float start) {
-        this.start = start;
+    public void setStart(float stars) {
+        this.stars = stars;
     }
 
     public CommentRequest(String messenger, float start) {
         this.messenger = messenger;
-        this.start = start;
+        this.stars = stars;
     }
 
     public CommentRequest(String messenger) {

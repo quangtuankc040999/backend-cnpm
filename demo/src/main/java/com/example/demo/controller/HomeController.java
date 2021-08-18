@@ -11,6 +11,7 @@ import com.example.demo.repository.UserDetailRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.GetUserFromToken;
 import com.example.demo.service.*;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -166,9 +167,13 @@ public class HomeController {
             mailMessage.setTo(existingUser.getEmail());
             mailMessage.setSubject("Complete Password Reset!");
             mailMessage.setText("Code: "+confirmationToken.getConfirmationToken());
-
             // Send the email
             emailSenderService.sendEmail(mailMessage);
+//            try {
+//                emailSenderService.sendSimpleMessage(email, confirmationToken.toString());
+//            } catch (UnirestException e) {
+//                e.printStackTrace();
+//            }
             return ResponseEntity.ok().body(confirmationToken.getConfirmationToken());
         } else {
             return ResponseEntity.ok().body(new MessageResponse("Email does not exist"));

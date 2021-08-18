@@ -117,7 +117,7 @@ public class UserController {
             comment.setUserId(user.getId());
             comment.setAvatar(user.getUserDetail().getAvatar());
             comment.setTimeComment(LocalDateTime.now());
-            comment.setStar(commentRequest.start);
+            comment.setStar(commentRequest.stars);
             commentService.saveComment(comment);
             return ResponseEntity.ok(new MessageResponse("comment successfully"));
         }catch (Exception e){
