@@ -137,6 +137,18 @@ public class DirectorController {
             return ResponseEntity.badRequest().body(new MessageResponse("Update hotel fail"));
         }
     }
+    // ================= delete hotel =======================
+    @PutMapping("/hotel/delete/{hotelId}")
+    public ResponseEntity<?> deleteHotel( @RequestHeader("Authorization") String token, @PathVariable("hotelId")Long hotelId){
+        try {
+            Hotel hotel = hotelService.findHotelById(hotelId);
+            hotel.setDelete(true);
+            hotelService.saveHotel(hotel);
+            return ResponseEntity.ok().body(new MessageResponse("Delete hotel successfully "));
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     // API FOR ROOM
     // API thêm phòng
@@ -180,7 +192,7 @@ public class DirectorController {
         return ResponseEntity.ok().body(roomService.getRoomById(roomId, hotelId));
     }
     @Transactional
-    @PostMapping(value = "/hotel/{hotelId}/{roomId}/update")
+    @PostMapping(value = "/hotel//update")
     public ResponseEntity<?> SaveUpdateRoom(@RequestParam("roomRequest") String jsonRoom, @PathVariable("hotelId") Long hotelId,@PathVariable("roomId") Long roomId, @RequestParam(required = false, name = "images") List<String> images ) {
         try {
             Gson gson = new Gson();
@@ -207,6 +219,18 @@ public class DirectorController {
             return  ResponseEntity.badRequest().body(e.getMessage());
         }
 
+    }
+
+    @PutMapping("/hotel/delete/{hotelId}/{roomId}")
+    public ResponseEntity<?> deleteHotel( @RequestHeader("Authorization") String token, @PathVariable("hotelId")Long hotelId, @PathVariable("roomId") Long roomId){
+        try {
+            Room room = roomService.getRoomById(roomId, hotelId);
+            room.setDelete(true);
+            roomService.saveRoom(room);
+            return ResponseEntity.ok().body(new MessageResponse("Delete room successfully "));
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // ====================================================================================================================

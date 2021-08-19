@@ -48,6 +48,7 @@ public class Room {
 
 	private LocalDateTime added;
 	private LocalDateTime uppdate;
+	private boolean isDelete = false;
 
 
 
@@ -56,6 +57,13 @@ public class Room {
 	
 	private int capacity;
 
+	public boolean isDelete() {
+		return isDelete;
+	}
+
+	public void setDelete(boolean delete) {
+		isDelete = delete;
+	}
 
 	@JsonManagedReference(value = "comment")
 	@OneToMany(mappedBy = "room" ,fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
