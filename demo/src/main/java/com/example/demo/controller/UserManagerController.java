@@ -47,13 +47,13 @@ public class UserManagerController {
     }
 
     // API get toan bộ khách sạn chưa active
-    @GetMapping("/getHotel")
+    @GetMapping("/hotel")
     public ResponseEntity<?> hotelActiveFalse(){
         List<Hotel> listHotel = hotelService.getHotelIsActiveFalse();
         return ResponseEntity.ok().body(listHotel);
     }
 
-    @PutMapping("/getHotel/unlock/{hotelId}")
+    @PutMapping("/hotel/unlock/{hotelId}")
     public ResponseEntity<?> activeHotel(@PathVariable("hotelId") long hotelId){
         try {
             hotelService.activeHotel(hotelId);

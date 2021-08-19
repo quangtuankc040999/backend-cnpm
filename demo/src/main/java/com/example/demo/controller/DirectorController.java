@@ -1,9 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.*;
-import com.example.demo.payload.reponse.BookingResponse;
-import com.example.demo.payload.reponse.InfoNotifyResponse;
-import com.example.demo.payload.reponse.MessageResponse;
+import com.example.demo.payload.reponse.*;
 import com.example.demo.payload.request.HotelRequest;
 import com.example.demo.payload.request.RoomRequest;
 import com.example.demo.security.jwt.GetUserFromToken;
@@ -139,6 +137,18 @@ public class DirectorController {
             return ResponseEntity.badRequest().body(new MessageResponse("Update hotel fail"));
         }
     }
+    // ================= delete hotel =======================
+    @PutMapping("/hotel/delete/{hotelId}")
+    public ResponseEntity<?> deleteHotel( @RequestHeader("Authorization") String token, @PathVariable("hotelId")Long hotelId){
+        try {
+            Hotel hotel = hotelService.findHotelById(hotelId);
+            hotel.setDelete(true);
+            hotelService.saveHotel(hotel);
+            return ResponseEntity.ok().body(new MessageResponse("Delete hotel successfully "));
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     // API FOR ROOM
     // API thêm phòng
@@ -182,7 +192,7 @@ public class DirectorController {
         return ResponseEntity.ok().body(roomService.getRoomById(roomId, hotelId));
     }
     @Transactional
-    @PostMapping(value = "/hotel/{hotelId}/{roomId}/update")
+    @PostMapping(value = "/hotel//update")
     public ResponseEntity<?> SaveUpdateRoom(@RequestParam("roomRequest") String jsonRoom, @PathVariable("hotelId") Long hotelId,@PathVariable("roomId") Long roomId, @RequestParam(required = false, name = "images") List<String> images ) {
         try {
             Gson gson = new Gson();
@@ -209,6 +219,18 @@ public class DirectorController {
             return  ResponseEntity.badRequest().body(e.getMessage());
         }
 
+    }
+
+    @PutMapping("/hotel/delete/{hotelId}/{roomId}")
+    public ResponseEntity<?> deleteHotel( @RequestHeader("Authorization") String token, @PathVariable("hotelId")Long hotelId, @PathVariable("roomId") Long roomId){
+        try {
+            Room room = roomService.getRoomById(roomId, hotelId);
+            room.setDelete(true);
+            roomService.saveRoom(room);
+            return ResponseEntity.ok().body(new MessageResponse("Delete room successfully "));
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // ====================================================================================================================
@@ -245,6 +267,12 @@ public class DirectorController {
         List<BookingResponse> bookingWaitting = bookingRoomService.getAllBookingWaitting(getUserFromToken.getUserByUserNameFromJwt(token.substring(7)).getId());
        return  ResponseEntity.ok().body(bookingWaitting);
     }
+    @GetMapping("/get-booking/{hotelId}")
+    public  ResponseEntity<?> getAllBookingWaitting(@RequestHeader("Authorization") String token,@PathVariable("hotelId") long hotelId){
+        List<BookingResponse> bookingWaitting = bookingRoomService.getAllBookingWaittingOfHotel(hotelId);
+        return  ResponseEntity.ok().body(bookingWaitting);
+    }
+
     @PutMapping("/get-booking/accept/{bookingId}")
     public ResponseEntity<?> accpetBooking(@PathVariable("bookingId") long bookingId){
         try {
@@ -304,6 +332,18 @@ public class DirectorController {
         }
     }
 
+    @GetMapping(value = "/checkin")
+    public  ResponseEntity<?> getAllRoomToCheckInAllHotel (@RequestHeader("Authorization") String token){
+        String newToken = token.substring(7);
+        User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+        try {
+            List<BookingResponse> allBookingCanCheckin = bookingRoomService.getAllBookingAcceptedStartNowAllHotel(user.getId());
+            return ResponseEntity.ok(allBookingCanCheckin);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PutMapping(value = "/checkin/{bookingId}")
     public ResponseEntity<?> checkIn (@PathVariable("bookingId") long bookingId){
         try {
@@ -316,6 +356,17 @@ public class DirectorController {
 
     // ===================================== Chức năng trả phòng ========================================
 
+    @GetMapping(value = "/checkout")
+    public  ResponseEntity<?> getAllRoomToCheckOutAll (@RequestHeader("Authorization") String token){
+        String newToken = token.substring(7);
+        User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+        try {
+            List<BookingResponse> allBookingCanCheckOut = bookingRoomService.getAllRoomCheckOutAllHotel(user.getId());
+            return ResponseEntity.ok(allBookingCanCheckOut);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     @GetMapping(value = "/checkout/{hotelId}")
     public  ResponseEntity<?> getAllRoomToCheckOut (@RequestHeader("Authorization") String token, @PathVariable("hotelId") Long hotelId){
         String newToken = token.substring(7);
@@ -336,6 +387,67 @@ public class DirectorController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
+    /*
+    *
+    * THỐNG KÊ CỦA DIRECTOR
+    *
+    * */
+    @GetMapping(value = "/statistical/all")
+    public ResponseEntity<?> thongKeChung (@RequestHeader("Authorization") String token){
+        try {
+            String newToken = token.substring(7);
+            User director = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            Long directorId = director.getId();
+
+            ThongKeDirectorChung thongKeDirectorChung = new ThongKeDirectorChung();
+            thongKeDirectorChung.setBookingInDay(bookingRoomService.soDonDatPhongTrongNgay(directorId));
+            thongKeDirectorChung.setTotalBookingInMonth(bookingRoomService.soDonDatPhongTrongThang(directorId));
+            thongKeDirectorChung.setTotalSalesInMonth(bookingRoomService.tongDoanhThuTrongThang(directorId));
+            thongKeDirectorChung.setDirectorId(directorId);
+            return  ResponseEntity.ok().body(thongKeDirectorChung);
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @GetMapping(value = "/statistical/{hotelId}")
+    public ResponseEntity<?> thongKeChung (@RequestHeader("Authorization") String token, @PathVariable("hotelId") Long hotelId){
+        try {
+            String newToken = token.substring(7);
+            User director = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            Long directorId = director.getId();
+
+            ThongKeDirectorChung thongKeDirectorChung = new ThongKeDirectorChung();
+            thongKeDirectorChung.setBookingInDay(bookingRoomService.soDonDatPhongTrongNgayKS(directorId,hotelId));
+            thongKeDirectorChung.setTotalBookingInMonth(bookingRoomService.soDonDatPhongTrongThangKS(directorId, hotelId));
+            thongKeDirectorChung.setTotalSalesInMonth(bookingRoomService.tongDoanhThuTrongThangKS(directorId,hotelId));
+            thongKeDirectorChung.setDirectorId(directorId);
+            thongKeDirectorChung.setHotelId(hotelId);
+            return  ResponseEntity.ok().body(thongKeDirectorChung);
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/statistical/{hotelId}/{year}")
+    public ResponseEntity<?> thongKeDoanhThuVeBieuDo (@RequestHeader("Authorization") String token, @PathVariable("hotelId") Long hotelId, @PathVariable("year") int year){
+        try {
+            String newToken = token.substring(7);
+            User director = getUserFromToken.getUserByUserNameFromJwt(newToken);
+            Long directorId = director.getId();
+
+            List<ThongKeDoanhThuDirector> doanhThu = bookingRoomService.thongKeDoanhThuDeVeBieuDo(hotelId,directorId,year);
+            return  ResponseEntity.ok().body(doanhThu);
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
 
 
 }

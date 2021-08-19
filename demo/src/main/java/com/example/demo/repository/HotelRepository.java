@@ -11,13 +11,13 @@ import java.util.List;
 public interface HotelRepository  extends JpaRepository<Hotel,Long > {
     Hotel findById (long id);
 
-    @Query(value = "SELECT * FROM hotel where is_active = 0;", nativeQuery = true)
+    @Query(value = "SELECT * FROM hotel where is_active = 0 and is_delete = 0;", nativeQuery = true)
     public List<Hotel> getHotelIsActiveFalse();
 
-    @Query(value = "SELECT * FROM hotel where h_owner_id = ?", nativeQuery = true)
+    @Query(value = "SELECT * FROM hotel where h_owner_id = ? and is_delete = 0", nativeQuery = true)
     List<Hotel> getAllHotelByDirectorId (Long idDirector);
 
-    @Query(value="SELECT * FROM hotel  join localization on hotel.id = localization.hotel_id where localization.province like  %? ", nativeQuery=true)
+    @Query(value="SELECT * FROM hotel  join localization on hotel.id = localization.hotel_id where localization.province like  %? and is_delete = 0 ", nativeQuery=true)
     List<Hotel> findAllHotelByProvice (String province);
 
 

@@ -199,7 +199,7 @@ public class UserController {
     /*
     * CHỨC NĂNG HUỶ ĐẶT PHÒNG
     * */
-    @PutMapping(value = "/cancel/{idBooking}")
+    @PostMapping(value = "/cancel/{idBooking}")
     public ResponseEntity<?> cancelBooking (@RequestHeader("Authorization") String token, @PathVariable("idBooking") Long idBooking){
 
        try {

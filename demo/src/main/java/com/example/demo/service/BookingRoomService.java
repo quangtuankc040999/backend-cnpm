@@ -5,6 +5,7 @@ import com.example.demo.entity.User;
 import com.example.demo.payload.reponse.BookingResponse;
 import com.example.demo.payload.reponse.InfoNotifyResponse;
 import com.example.demo.payload.reponse.MessageResponse;
+import com.example.demo.payload.reponse.ThongKeDoanhThuDirector;
 import com.example.demo.repository.BookingRoomRepository;
 import com.example.demo.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class BookingRoomService {
     public List<BookingResponse> getAllBookingWaitting(Long directorId){
         return bookingRoomRepository.getAllBookingWaitting(directorId);
     }
+    public List<BookingResponse> getAllBookingWaittingOfHotel(Long hotelId){
+        return bookingRoomRepository.getAllBookingWaittingOfHotel(hotelId);
+    }
 
     public  void accepetedBooking(Long bookingId){
         BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
@@ -80,6 +84,9 @@ public class BookingRoomService {
     public  List<BookingResponse> getAllBookingAcceptedStartNow (Long hotelId){
         return bookingRoomRepository.getRoomStartNowAndAccepted(hotelId);
     }
+    public  List<BookingResponse> getAllBookingAcceptedStartNowAllHotel (Long directorId){
+        return bookingRoomRepository.getRoomStartNowAndAcceptedAllHotel(directorId);
+    }
     public  void checkinBooking(Long bookingId){
         BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
         bookingRoom.setStatus("using");
@@ -90,6 +97,9 @@ public class BookingRoomService {
     // ========================== trả phòng =======================================
     public  List<BookingResponse> getAllRoomCheckOut (Long hotelId){
         return bookingRoomRepository.getRoomForCheckOut(hotelId);
+    }
+    public  List<BookingResponse> getAllRoomCheckOutAllHotel (Long directorId){
+        return bookingRoomRepository.getRoomForCheckOutAllHotel(directorId);
     }
     public  void checkoutBooking(Long bookingId){
         BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
@@ -127,5 +137,34 @@ public class BookingRoomService {
     }
 
 
-    // ======================== Comment ===============================
+    /*
+    *
+    * THỐNG KÊ DIRECTOR
+    *
+    * */
+
+    // =========================Tất cả khách sạn của director =============================
+    public  Long soDonDatPhongTrongNgay (Long directorId){
+        return  bookingRoomRepository.soDonDatPhongMoiTrongNgay(directorId);
+    }
+    public  Long soDonDatPhongTrongThang (Long directorId){
+        return  bookingRoomRepository.soDonDatPhongTrongThang(directorId);
+    }
+    public  Long tongDoanhThuTrongThang (Long directorId){
+        return  bookingRoomRepository.tongDoanhThuTrongThang(directorId);
+    }
+    // =============== từng khách sạn ==============================
+    public  Long soDonDatPhongTrongNgayKS (Long directorId, Long hotelId){
+        return  bookingRoomRepository.soDonDatPhongMoiTrongNgayKS(directorId, hotelId);
+    }
+    public  Long soDonDatPhongTrongThangKS (Long directorId,Long hotelId){
+        return  bookingRoomRepository.soDonDatPhongTrongThangKS(directorId, hotelId);
+    }
+    public  Long tongDoanhThuTrongThangKS (Long directorId,Long hotelId){
+        return  bookingRoomRepository.tongDoanhThuTrongThangKS(directorId, hotelId);
+    }
+
+    public  List<ThongKeDoanhThuDirector> thongKeDoanhThuDeVeBieuDo (Long hotelId, Long directorId, int year){
+        return bookingRoomRepository.thongKeDoanhThuDeVeBieuDo(hotelId,directorId,year);
+    }
 }

@@ -51,11 +51,11 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.ok(new MessageResponse("username is taken"));
+            return ResponseEntity.badRequest().body(new MessageResponse("username is taken"));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.ok(new MessageResponse("email is taken"));
+            return ResponseEntity.badRequest().body(new MessageResponse("email is taken"));
         }
 
         // Create new user's account
@@ -128,7 +128,7 @@ public class AuthController {
                     userDetails.getUserDetail(),
                     roles));
         }catch (Exception e){
-            return ResponseEntity.ok(new MessageResponse("incorrect"));
+            return ResponseEntity.badRequest().body(new MessageResponse("incorrect"));
         }
 
     }

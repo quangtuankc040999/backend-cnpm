@@ -50,6 +50,15 @@ public class Hotel {
     private LocalDateTime added;
     private LocalDateTime updated;
 
+    private boolean isDelete = false;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
 
     public Hotel() {
     }
