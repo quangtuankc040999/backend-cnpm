@@ -243,6 +243,12 @@ public class DirectorController {
         List<BookingResponse> bookingWaitting = bookingRoomService.getAllBookingWaitting(getUserFromToken.getUserByUserNameFromJwt(token.substring(7)).getId());
        return  ResponseEntity.ok().body(bookingWaitting);
     }
+    @GetMapping("/get-booking/{hotelId}")
+    public  ResponseEntity<?> getAllBookingWaitting(@RequestHeader("Authorization") String token,@PathVariable("hotelId") long hotelId){
+        List<BookingResponse> bookingWaitting = bookingRoomService.getAllBookingWaittingOfHotel(hotelId);
+        return  ResponseEntity.ok().body(bookingWaitting);
+    }
+
     @PutMapping("/get-booking/accept/{bookingId}")
     public ResponseEntity<?> accpetBooking(@PathVariable("bookingId") long bookingId){
         try {
@@ -302,6 +308,18 @@ public class DirectorController {
         }
     }
 
+    @GetMapping(value = "/checkin")
+    public  ResponseEntity<?> getAllRoomToCheckInAllHotel (@RequestHeader("Authorization") String token){
+        String newToken = token.substring(7);
+        User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+        try {
+            List<BookingResponse> allBookingCanCheckin = bookingRoomService.getAllBookingAcceptedStartNowAllHotel(user.getId());
+            return ResponseEntity.ok(allBookingCanCheckin);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PutMapping(value = "/checkin/{bookingId}")
     public ResponseEntity<?> checkIn (@PathVariable("bookingId") long bookingId){
         try {
@@ -314,6 +332,17 @@ public class DirectorController {
 
     // ===================================== Chức năng trả phòng ========================================
 
+    @GetMapping(value = "/checkout")
+    public  ResponseEntity<?> getAllRoomToCheckOutAll (@RequestHeader("Authorization") String token){
+        String newToken = token.substring(7);
+        User user = getUserFromToken.getUserByUserNameFromJwt(newToken);
+        try {
+            List<BookingResponse> allBookingCanCheckOut = bookingRoomService.getAllRoomCheckOutAllHotel(user.getId());
+            return ResponseEntity.ok(allBookingCanCheckOut);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     @GetMapping(value = "/checkout/{hotelId}")
     public  ResponseEntity<?> getAllRoomToCheckOut (@RequestHeader("Authorization") String token, @PathVariable("hotelId") Long hotelId){
         String newToken = token.substring(7);
@@ -393,6 +422,8 @@ public class DirectorController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
 
 
 }

@@ -36,6 +36,16 @@ public interface BookingRoomRepository  extends JpaRepository<BookingRoom, Long>
             "join user_detail on booking_room.host_id = user_detail.user_id\n" +
             "where booking_room.status = \"waitting\" and hotel.h_owner_id = ? order by time_book desc", nativeQuery = true)
     List<BookingResponse> getAllBookingWaitting(Long directorId);
+//================================================================================
+    @Query(value = "select is_comment as isComment, booking_room.id as idBooking,hotel.id as hotelId, status, user_detail.name_user_detail as host, room.name as roomName , hotel.name as hotelName,room.id as roomId, start, end, time_book as timeBook, (datediff(end,start) +1 )*room.price as total\n" +
+            "from booking_room \n" +
+            "join room on room.id = booking_room.room_id\n" +
+            "join hotel on hotel.id = room.hotel_id\n" +
+            "join user_detail on booking_room.host_id = user_detail.user_id\n" +
+            "where booking_room.status = \"waitting\" and hotel.id = ? order by time_book desc", nativeQuery = true)
+    List<BookingResponse> getAllBookingWaittingOfHotel(Long hotelId);
+
+
 
     @Query(value = "SELECT * FROM booking_room where id =? ", nativeQuery = true)
     BookingRoom getOneById(Long bookingId);
@@ -50,20 +60,33 @@ public interface BookingRoomRepository  extends JpaRepository<BookingRoom, Long>
 
     // ======================= nhận phòng ==================================
     // lấy ra tất cả booking  đã được xác nhận và nhận vào ngày hôm nay của khách sạn
-    @Query(value = "select is_comment as isComment, booking_room.id as idBooking,hotel.id as hotelId, user_detail.name_user_detail as host, room.name as roomName ,room.id as roomId, start, end, time_book as timeBook , status  from booking_room \n" +
+    @Query(value = "select hotel.name as hotelName, (datediff(end,start) +1 )*room.price as total, is_comment as isComment, booking_room.id as idBooking,hotel.id as hotelId, user_detail.name_user_detail as host, room.name as roomName ,room.id as roomId, start, end, time_book as timeBook , status  from booking_room \n" +
             "join room on booking_room.room_id = room.id\n" +
             "join hotel on hotel.id = room.hotel_id\n" +
             "join user_detail on booking_room.host_id = user_detail.user_id\n" +
             " where status = \"accepted\" and start =  CURDATE()  and hotel_id = ?  ", nativeQuery = true)
     List<BookingResponse> getRoomStartNowAndAccepted (Long hotelId);
 
+    @Query(value = "select hotel.name as hotelName, (datediff(end,start) +1 )*room.price as total, is_comment as isComment, booking_room.id as idBooking,hotel.id as hotelId, user_detail.name_user_detail as host, room.name as roomName ,room.id as roomId, start, end, time_book as timeBook , status  from booking_room \n" +
+            "join room on booking_room.room_id = room.id\n" +
+            "join hotel on hotel.id = room.hotel_id\n" +
+            "join user_detail on booking_room.host_id = user_detail.user_id\n" +
+            " where status = \"accepted\" and start =  CURDATE()  and hotel.h_owner_id = ?  ", nativeQuery = true)
+    List<BookingResponse> getRoomStartNowAndAcceptedAllHotel (Long directorId);
+
     // ========================= trả phòng ==================================
-    @Query(value = "select is_comment as isComment, booking_room.id as idBooking,hotel.id as hotelId, user_detail.name_user_detail as host, room.name as roomName ,room.id as roomId, start, end, time_book as timeBook , status  from booking_room \n" +
+    @Query(value = "select hotel.name as hotelName, (datediff(end,start) +1 )*room.price as total,is_comment as isComment, booking_room.id as idBooking,hotel.id as hotelId, user_detail.name_user_detail as host, room.name as roomName ,room.id as roomId, start, end, time_book as timeBook , status  from booking_room \n" +
             "join room on booking_room.room_id = room.id\n" +
             "join hotel on hotel.id = room.hotel_id\n" +
             "join user_detail on booking_room.host_id = user_detail.user_id\n" +
             " where status = \"using\" and end =  CURDATE()  and hotel_id = ?  ", nativeQuery = true)
     List<BookingResponse> getRoomForCheckOut (Long hotelId);
+    @Query(value = "select hotel.name as hotelName, (datediff(end,start) +1 )*room.price as total,is_comment as isComment, booking_room.id as idBooking,hotel.id as hotelId, user_detail.name_user_detail as host, room.name as roomName ,room.id as roomId, start, end, time_book as timeBook , status  from booking_room \n" +
+            "join room on booking_room.room_id = room.id\n" +
+            "join hotel on hotel.id = room.hotel_id\n" +
+            "join user_detail on booking_room.host_id = user_detail.user_id\n" +
+            " where status = \"using\" and end =  CURDATE()  and hotel.h_owner_id = ?  ", nativeQuery = true)
+    List<BookingResponse> getRoomForCheckOutAllHotel (Long directorId);
 
 
     /*
@@ -198,5 +221,8 @@ public interface BookingRoomRepository  extends JpaRepository<BookingRoom, Long>
             "group by month(start)\n" +
             "ORDER BY month DESC;", nativeQuery = true)
     List<ThongKeDoanhThuDirector> thongKeDoanhThuDeVeBieuDo(Long hotelId, Long directorId, int year);
+
+
+
 }
 

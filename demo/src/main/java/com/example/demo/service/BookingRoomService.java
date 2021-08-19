@@ -51,6 +51,9 @@ public class BookingRoomService {
     public List<BookingResponse> getAllBookingWaitting(Long directorId){
         return bookingRoomRepository.getAllBookingWaitting(directorId);
     }
+    public List<BookingResponse> getAllBookingWaittingOfHotel(Long hotelId){
+        return bookingRoomRepository.getAllBookingWaittingOfHotel(hotelId);
+    }
 
     public  void accepetedBooking(Long bookingId){
         BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
@@ -81,6 +84,9 @@ public class BookingRoomService {
     public  List<BookingResponse> getAllBookingAcceptedStartNow (Long hotelId){
         return bookingRoomRepository.getRoomStartNowAndAccepted(hotelId);
     }
+    public  List<BookingResponse> getAllBookingAcceptedStartNowAllHotel (Long directorId){
+        return bookingRoomRepository.getRoomStartNowAndAcceptedAllHotel(directorId);
+    }
     public  void checkinBooking(Long bookingId){
         BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
         bookingRoom.setStatus("using");
@@ -91,6 +97,9 @@ public class BookingRoomService {
     // ========================== trả phòng =======================================
     public  List<BookingResponse> getAllRoomCheckOut (Long hotelId){
         return bookingRoomRepository.getRoomForCheckOut(hotelId);
+    }
+    public  List<BookingResponse> getAllRoomCheckOutAllHotel (Long directorId){
+        return bookingRoomRepository.getRoomForCheckOutAllHotel(directorId);
     }
     public  void checkoutBooking(Long bookingId){
         BookingRoom bookingRoom = bookingRoomRepository.getOneById(bookingId);
