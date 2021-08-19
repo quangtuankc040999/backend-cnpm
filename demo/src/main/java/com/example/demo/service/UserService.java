@@ -25,6 +25,7 @@ public class UserService {
     public  List<User> getDirectorActiveFalse(){
         return  userRepository.findDirectorActiveFalse();
     }
+
     public boolean UnlockUser(Long userId) throws UserNotFoundException {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("Khong ton tai tai khoan");

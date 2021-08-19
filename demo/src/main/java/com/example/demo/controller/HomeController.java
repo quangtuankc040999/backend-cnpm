@@ -1,21 +1,25 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.ConfirmationToken;
-import com.example.demo.entity.User;
-import com.example.demo.entity.UserDetail;
+import com.example.demo.entity.*;
+import com.example.demo.payload.reponse.HotelSearchResponse;
 import com.example.demo.payload.reponse.MessageResponse;
 import com.example.demo.payload.request.PasswordRequest;
+import com.example.demo.payload.request.SearchRequest;
 import com.example.demo.payload.request.UpdateInformationRequest;
 import com.example.demo.repository.ConfirmationTokenRepository;
+import com.example.demo.repository.UserDetailRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.GetUserFromToken;
-import com.example.demo.service.EmailSenderService;
-import com.example.demo.service.UserService;
+import com.example.demo.service.*;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -34,6 +38,85 @@ public class HomeController {
     EmailSenderService emailSenderService;
     @Autowired
     ConfirmationTokenRepository confirmationTokenRepository;
+    @Autowired
+    UserDetailRepository userDetailRepository;
+    @Autowired
+    BookingRoomService bookingRoomService;
+    @Autowired
+    HotelService hotelService;
+    @Autowired
+    RoomService roomService;
+    @Autowired
+    CommentService commentService;
+    @Autowired
+    NotificationService notificationService;
+
+    List<HotelSearchResponse> hotelSearchResponseList = new ArrayList<>();
+
+    @PostMapping(value = "/search")
+    public ResponseEntity<?> search(@RequestBody SearchRequest searchRequest) {
+
+        List<Hotel> hotels = hotelService.findAllHotelByProvice(searchRequest.getProvince()); // lấy tất cả hotel trong tỉnh , thành phố
+        List<Room> roomList = new ArrayList<>();
+
+        List<BookingRoom> bookingRoomList = bookingRoomService.getAllRoomByDateBooking(searchRequest.getStart(), searchRequest.getEnd());// trả về list các booking thành công hoặc đang chờ
+
+        for (Hotel hotel: hotels) {
+            List<Room> rooms = roomService.searchRoomByCapacity(hotel.getId(), searchRequest.getCapacity());
+
+            for (Room room: rooms) {
+                roomList.add(room);
+                for (BookingRoom bk: bookingRoomList) {
+                    if(bk.getRoom().getId() == room.getId()) {
+                        roomList.remove(room);
+                        break;
+                    }
+                }
+            }
+            for(Room room : roomList){
+                if(commentService.getRateRoom(room.getId()) != null){
+                    room.setRate(commentService.getRateRoom(room.getId()).getRate());
+                    room.setNumberReview((commentService.getRateRoom(room.getId()).getTotal()));
+                    roomService.saveRoom(room);
+                }
+                else {
+                    room.setRate(0.0);
+                    room.setNumberReview(0);
+                    roomService.saveRoom(room);
+                }
+            }
+        }
+        List<Hotel> hotelList = new ArrayList<>();
+        for(Room room : roomList) {
+            Hotel hotel = room.getHotel();
+            hotelList.add(hotel);
+        }
+        for (int i = 0; i < hotelList.size(); i++ ) {
+            for (int j = i+1; j < hotelList.size(); j++) {
+                if (hotelList.get(i).getId() == hotelList.get(j).getId()) {
+                    hotelList.remove(hotelList.get(j));
+                    j--;
+                }
+            }
+        }
+        hotelSearchResponseList.clear();
+        for (Hotel hotel: hotelList) {
+            HotelSearchResponse hotelSearchResponse = new HotelSearchResponse();
+            Hotel hotel1 = hotel;
+
+            List<Room> rooms = new ArrayList<>();
+            for(Room room: roomList) {
+                if (hotel.getId() == room.getHotel().getId()) {
+                    rooms.add(room);
+                }
+            }
+            hotel1.setRooms(rooms);
+            hotelSearchResponse.setHotel(hotel1);
+            hotelSearchResponseList.add(hotelSearchResponse);
+        }
+        return ResponseEntity.ok(hotelSearchResponseList);
+    }
+    //=======================================================================================================================
 
     // API update information
 
@@ -43,7 +126,7 @@ public class HomeController {
         return ResponseEntity.ok().body(user);
     }
 
-    @PostMapping(value = "/update-information/save")
+    @PostMapping(value = "/update-information")
     public ResponseEntity<?> updateInformation(@RequestHeader("Authorization") String token, @RequestBody UpdateInformationRequest userRequest) {
         User user = getUserFromToken.getUserByUserNameFromJwt(token.substring(7));
         UserDetail userDetail = user.getUserDetail();
@@ -64,7 +147,7 @@ public class HomeController {
             userRepository.save(user);
             return ResponseEntity.ok().body(new MessageResponse("change password successfully"));
         } else {
-            return ResponseEntity.ok().body(new MessageResponse("current password incorrect"));
+            return ResponseEntity.badRequest().body(new MessageResponse("current password incorrect"));
         }
     }
 
@@ -84,9 +167,13 @@ public class HomeController {
             mailMessage.setTo(existingUser.getEmail());
             mailMessage.setSubject("Complete Password Reset!");
             mailMessage.setText("Code: "+confirmationToken.getConfirmationToken());
-
             // Send the email
             emailSenderService.sendEmail(mailMessage);
+//            try {
+//                emailSenderService.sendSimpleMessage(email, confirmationToken.toString());
+//            } catch (UnirestException e) {
+//                e.printStackTrace();
+//            }
             return ResponseEntity.ok().body(confirmationToken.getConfirmationToken());
         } else {
             return ResponseEntity.ok().body(new MessageResponse("Email does not exist"));
@@ -104,4 +191,84 @@ public class HomeController {
         return ResponseEntity.ok().body(new MessageResponse("change password successfully"));
     }
 
+    // Change Avatar
+    @PostMapping(value = "/change-avatar")
+    public ResponseEntity<?> changeAvatar(@RequestHeader("Authorization") String token,@RequestParam(name = "avatar") String avatar){
+        User user = getUserFromToken.getUserByUserNameFromJwt(token.substring(7));
+        UserDetail userDetail = user.getUserDetail();
+        try {
+            userDetail.setAvatar(avatar);
+            userDetailRepository.save(userDetail);
+            return ResponseEntity.ok().body(new MessageResponse("Change Avatar successfully"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(new MessageResponse("Change Avatar false"));
+        }
+
+    }
+
+    // GET NOTIFICATION
+    @GetMapping (value = "/notifications")
+    public ResponseEntity<?> getNotificationOfUser(@RequestHeader("Authorization") String token){
+        User user = getUserFromToken.getUserByUserNameFromJwt(token.substring(7));
+       try {
+          Long userId = user.getId();
+          List<Notification> notification = notificationService.getNotificationOfUser(userId);
+          return ResponseEntity.ok().body(notification);
+
+       }catch (Exception e){
+           return ResponseEntity.badRequest().body(e.getMessage());
+       }
+
+    }
+
+    @GetMapping (value = "/notifications/read/{idBooking}")
+    public ResponseEntity<?> getNotificationOfUserRead(@RequestHeader("Authorization") String token, @PathVariable("idBooking") Long idBooking){
+        User user = getUserFromToken.getUserByUserNameFromJwt(token.substring(7));
+        try {
+
+            Notification notification = notificationService.getToRead(idBooking);
+            notification.setRead(true);
+            notificationService.save(notification);
+            return ResponseEntity.ok().body(new MessageResponse("Đã đọc"));
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+    }
+
+
+    /*
+     * GET HOTEL BY HOTEL ID
+     * */
+    @GetMapping(value = "/hotel/{hotelId}")
+    public ResponseEntity<?> getHotelById(@PathVariable("hotelId") Long hotelId){
+        try{
+            Hotel hotel = hotelService.findHotelById(hotelId);
+            return ResponseEntity.ok().body(hotel);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/room/{roomId}")
+    public ResponseEntity<?> getRoomById(@PathVariable("roomId") Long roomId){
+        try{
+            Room room = roomService.getRoomById(roomId);
+            return ResponseEntity.ok().body(room);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/booking/{bookingId}")
+    public ResponseEntity<?> getBookingById(@PathVariable("bookingId") Long bookingId){
+        try{
+            BookingRoom bookingRoom = bookingRoomService.getOneBookingById(bookingId);
+            return ResponseEntity.ok().body(bookingRoom);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

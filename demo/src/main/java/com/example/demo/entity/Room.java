@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -24,41 +25,62 @@ public class Room {
 
 	private String name;
 
-	private boolean availability = true;
 
 	@JsonBackReference(value = "booking")
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
 	private List<BookingRoom> bookingRoom;
 
-	@JsonBackReference(value = "cancelBooking")
-	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
-	private List<CancelBooking> cancelBookings;
+
 
 	@JsonBackReference(value = "room")
 	@ManyToOne
 	@JoinColumn(name = "hotelId")
+
 	private Hotel hotel;
 
-
-	private boolean promoted = false;
-
 	private String description;
+
+	private String utilities; // tiện ích chỗ ở
 
 	@JsonManagedReference(value = "imageRoom")
 	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	private List<Image> images;
 
-	private LocalDate added;
+	private LocalDateTime added;
+	private LocalDateTime uppdate;
+	private boolean isDelete = false;
+
+
 
 	@Column(columnDefinition = "Decimal(2,1) default 0.0")
 	private double rate = 0;
 	
 	private int capacity;
 
-	public Room() {
-
+	public boolean isDelete() {
+		return isDelete;
 	}
 
+	public void setDelete(boolean delete) {
+		isDelete = delete;
+	}
+
+	@JsonManagedReference(value = "comment")
+	@OneToMany(mappedBy = "room" ,fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+	private List<Comment> comments;
+
+	private  int numberReview = 0;
+
+	public int getNumberReview() {
+		return numberReview;
+	}
+
+	public void setNumberReview(int numberReview) {
+		this.numberReview = numberReview;
+	}
+
+	public Room() {
+	}
 	public long getId() {
 		return id;
 	}
@@ -99,13 +121,6 @@ public class Room {
 		this.name = name;
 	}
 
-	public boolean isAvailability() {
-		return availability;
-	}
-
-	public void setAvailability(boolean availability) {
-		this.availability = availability;
-	}
 
 	public List<BookingRoom> getBookingRoom() {
 		return bookingRoom;
@@ -121,16 +136,6 @@ public class Room {
 
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
-	}
-
-
-
-	public boolean isPromoted() {
-		return promoted;
-	}
-
-	public void setPromoted(boolean promoted) {
-		this.promoted = promoted;
 	}
 
 	public String getDescription() {
@@ -149,12 +154,20 @@ public class Room {
 		this.images = images;
 	}
 
-	public LocalDate getAdded() {
+	public LocalDateTime getAdded() {
 		return added;
 	}
 
-	public void setAdded(LocalDate added) {
+	public void setAdded(LocalDateTime added) {
 		this.added = added;
+	}
+
+	public LocalDateTime getUppdate() {
+		return uppdate;
+	}
+
+	public void setUppdate(LocalDateTime uppdate) {
+		this.uppdate = uppdate;
 	}
 
 	public double getRate() {
@@ -173,19 +186,34 @@ public class Room {
 		this.capacity = capacity;
 	}
 
-	public Room(long id, double area, double price, @NotBlank String type, String name, boolean availability, List<BookingRoom> bookingRoom, Hotel hotel, List<User> host, boolean promoted, String description, List<Image> images, LocalDate added, double rate, int capacity) {
+	public String getUtilities() {
+		return utilities;
+	}
+
+	public void setUtilities(String utilities) {
+		this.utilities = utilities;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
+	public Room(long id, double area, double price, @NotBlank String type, String name, List<BookingRoom> bookingRoom, Hotel hotel, String description, List<Image> images, LocalDateTime added, LocalDateTime uppdate, double rate, int capacity) {
 		this.id = id;
 		this.area = area;
 		this.price = price;
 		this.type = type;
 		this.name = name;
-		this.availability = availability;
 		this.bookingRoom = bookingRoom;
 		this.hotel = hotel;
-		this.promoted = promoted;
 		this.description = description;
 		this.images = images;
 		this.added = added;
+		this.uppdate = uppdate;
 		this.rate = rate;
 		this.capacity = capacity;
 	}
@@ -199,8 +227,8 @@ public class Room {
 
 	@Override
 	public String toString() {
-		return "Room [id=" + id + ", area=" + area + ", type=" + type + ", availability=" + availability + ", date="
-				+ bookingRoom + ", hotel=" + hotel + ", host=" + ", promoted=" + promoted + ", description="
+		return "Room [id=" + id + ", area=" + area + ", type=" + type + ", availability="  + ", date="
+				+ bookingRoom + ", hotel=" + hotel + ", host=" + ", description="
 				+ description + ", image=" + images + "]";
 	}
 

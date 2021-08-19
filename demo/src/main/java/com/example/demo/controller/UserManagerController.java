@@ -1,8 +1,10 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.Hotel;
 import com.example.demo.entity.User;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.payload.reponse.MessageResponse;
+import com.example.demo.service.HotelService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,8 @@ import java.util.List;
 public class UserManagerController {
     @Autowired
     UserService userService;
+    @Autowired
+    HotelService hotelService;
 
     /*
      * Tat ca cac director da dang ky nhung tai khoan chua active
@@ -33,7 +37,7 @@ public class UserManagerController {
      * API unlock tai khoan
      */
     @PutMapping("/getDirector/unlock/{directorId}")
-    public ResponseEntity<?> moKhoaTaiKhoan(@PathVariable("directorId") long directorId){
+    public ResponseEntity<?> activeAccount(@PathVariable("directorId") long directorId){
         try {
             userService.UnlockUser(directorId);
         }catch (UserNotFoundException e){
@@ -41,4 +45,23 @@ public class UserManagerController {
         }
         return  ResponseEntity.ok().body(new MessageResponse("Done unlock"));
     }
+
+    // API get toan bộ khách sạn chưa active
+    @GetMapping("/hotel")
+    public ResponseEntity<?> hotelActiveFalse(){
+        List<Hotel> listHotel = hotelService.getHotelIsActiveFalse();
+        return ResponseEntity.ok().body(listHotel);
+    }
+
+    @PutMapping("/hotel/unlock/{hotelId}")
+    public ResponseEntity<?> activeHotel(@PathVariable("hotelId") long hotelId){
+        try {
+            hotelService.activeHotel(hotelId);
+            return  ResponseEntity.ok().body(new MessageResponse("Done unlock hotel"));
+        }catch (Exception e){
+           return ResponseEntity.ok().body(new MessageResponse("Can't done active hotel"));
+        }
+    }
+
+
 }

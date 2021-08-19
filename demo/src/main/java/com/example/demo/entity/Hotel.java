@@ -1,11 +1,14 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -26,7 +29,7 @@ public class Hotel {
 
     @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "hotel")
     @PrimaryKeyJoinColumn
-    private Localization address;
+    private Localization localization;
 
     @JsonManagedReference(value = "hotel")
     @ManyToOne
@@ -42,20 +45,49 @@ public class Hotel {
     
     private boolean isActive;
 
+
+    private String typeOfHotel;
+    private LocalDateTime added;
+    private LocalDateTime updated;
+
+    private boolean isDelete = false;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
+
     public Hotel() {
     }
-    
-    
 
-    public Hotel(long id, @NotBlank String name, double rating, @Max(5) @Min(0) float standard, Localization address, User hOwner, List<Room> rooms, List<Image> images) {
-        this.id = id;
-        this.name = name;
-        this.rating = rating;
-        this.standard = standard;
-        this.address = address;
-        this.hOwner = hOwner;
-        this.rooms = rooms;
-        this.images = images;
+
+
+
+    public String getTypeOfHotel() {
+        return typeOfHotel;
+    }
+
+    public LocalDateTime getAdded() {
+        return added;
+    }
+
+    public void setAdded(LocalDateTime added) {
+        this.added = added;
+    }
+
+    public LocalDateTime getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(LocalDateTime updated) {
+        this.updated = updated;
+    }
+
+    public void setTypeOfHotel(String typeOfHotel) {
+        this.typeOfHotel = typeOfHotel;
     }
 
     public long getId() {
@@ -90,12 +122,27 @@ public class Hotel {
         this.standard = standard;
     }
 
-    public Localization getAddress() {
-        return address;
+    public Localization getLocalization() {
+        return localization;
     }
 
-    public void setAddress(Localization address) {
-        this.address = address;
+    public void setLocalization(Localization localization) {
+        this.localization = localization;
+    }
+
+    public Hotel(long id, @NotBlank String name, double rating, @Max(5) @Min(0) float standard, Localization localization, User hOwner, List<Room> rooms, List<Image> images, boolean isActive, String typeOfHotel, LocalDateTime added, LocalDateTime updated) {
+        this.id = id;
+        this.name = name;
+        this.rating = rating;
+        this.standard = standard;
+        this.localization = localization;
+        this.hOwner = hOwner;
+        this.rooms = rooms;
+        this.images = images;
+        this.isActive = isActive;
+        this.typeOfHotel = typeOfHotel;
+        this.added = added;
+        this.updated = updated;
     }
 
     public User gethOwner() {
@@ -120,5 +167,13 @@ public class Hotel {
 
     public void setImages(List<Image> images) {
         this.images = images;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }
