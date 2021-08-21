@@ -6,6 +6,33 @@ public class ThongKeDirectorChung {
     private Long bookingInDay;
    private Long totalBookingInMonth;
     private Long totalSalesInMonth;
+    private  Long bookingYesterday;
+    private Long totalBookingLastMonth;
+    private Long totalSalesLastMonth;
+
+    public Long getBookingYesterday() {
+        return bookingYesterday;
+    }
+
+    public void setBookingYesterday(Long bookingYesterday) {
+        this.bookingYesterday = bookingYesterday;
+    }
+
+    public Long getTotalBookingLastMonth() {
+        return totalBookingLastMonth;
+    }
+
+    public void setTotalBookingLastMonth(Long totalBookingLastMonth) {
+        this.totalBookingLastMonth = totalBookingLastMonth;
+    }
+
+    public Long getTotalSalesLastMonth() {
+        return totalSalesLastMonth;
+    }
+
+    public void setTotalSalesLastMonth(Long totalSalesLastMonth) {
+        this.totalSalesLastMonth = totalSalesLastMonth;
+    }
 
     public Long getHotelId() {
         return hotelId;

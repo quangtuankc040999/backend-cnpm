@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,14 +44,27 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private UserDetail userDetail;
+    private LocalDate timeSignUp;
+
+
 
     public User() {
     }
 
-    public User(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) @Email String email, @NotBlank @Size(max = 120) String password) {
+    public User(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) @Email String email, @NotBlank @Size(max = 120) String password, LocalDate timeSignUp) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.timeSignUp = timeSignUp;
+
+    }
+
+    public LocalDate getTimeSignUp() {
+        return timeSignUp;
+    }
+
+    public void setTimeSignUp(LocalDate timeSignUp) {
+        this.timeSignUp = timeSignUp;
     }
 
     public boolean isActive() {

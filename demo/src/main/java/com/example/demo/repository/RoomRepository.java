@@ -20,7 +20,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     List<Room> findAllRoomByHotelId(Long id);
 
 
-    @Query(value = "SELECT * FROM room where hotel_id = ?1 and capacity = ?2 is_delete = 0", nativeQuery = true)
+    @Query(value = "SELECT * FROM room where hotel_id = ?1 and capacity = ?2 and is_delete = 0", nativeQuery = true)
     List<Room> searchRoomByCapacity (Long hotelId, int capacity);
 
     @Query(value = "SELECT room_id FROM booking_room\n" +

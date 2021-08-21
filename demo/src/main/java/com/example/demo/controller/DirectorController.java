@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -138,7 +139,7 @@ public class DirectorController {
         }
     }
     // ================= delete hotel =======================
-    @PutMapping("/hotel/delete/{hotelId}")
+    @PostMapping("/hotel/delete/{hotelId}")
     public ResponseEntity<?> deleteHotel( @RequestHeader("Authorization") String token, @PathVariable("hotelId")Long hotelId){
         try {
             Hotel hotel = hotelService.findHotelById(hotelId);
@@ -221,8 +222,8 @@ public class DirectorController {
 
     }
 
-    @PutMapping("/hotel/delete/{hotelId}/{roomId}")
-    public ResponseEntity<?> deleteHotel( @RequestHeader("Authorization") String token, @PathVariable("hotelId")Long hotelId, @PathVariable("roomId") Long roomId){
+    @PostMapping("/hotel/delete/{hotelId}/{roomId}")
+    public ResponseEntity<?> deleteRoom( @RequestHeader("Authorization") String token, @PathVariable("hotelId")Long hotelId, @PathVariable("roomId") Long roomId){
         try {
             Room room = roomService.getRoomById(roomId, hotelId);
             room.setDelete(true);
@@ -405,6 +406,9 @@ public class DirectorController {
             thongKeDirectorChung.setBookingInDay(bookingRoomService.soDonDatPhongTrongNgay(directorId));
             thongKeDirectorChung.setTotalBookingInMonth(bookingRoomService.soDonDatPhongTrongThang(directorId));
             thongKeDirectorChung.setTotalSalesInMonth(bookingRoomService.tongDoanhThuTrongThang(directorId));
+            thongKeDirectorChung.setBookingYesterday(bookingRoomService.soDonDatPhongTrongNgayHomQua(directorId));
+            thongKeDirectorChung.setTotalBookingLastMonth(bookingRoomService.soDonDatPhongTrongThangTruoc(directorId));
+            thongKeDirectorChung.setTotalSalesLastMonth(bookingRoomService.tongDoanhThuTrongThangTruoc(directorId));
             thongKeDirectorChung.setDirectorId(directorId);
             return  ResponseEntity.ok().body(thongKeDirectorChung);
 
@@ -412,6 +416,8 @@ public class DirectorController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
     @GetMapping(value = "/statistical/{hotelId}")
     public ResponseEntity<?> thongKeChung (@RequestHeader("Authorization") String token, @PathVariable("hotelId") Long hotelId){
         try {
@@ -432,14 +438,22 @@ public class DirectorController {
         }
     }
 
-    @GetMapping(value = "/statistical/{hotelId}/{year}")
-    public ResponseEntity<?> thongKeDoanhThuVeBieuDo (@RequestHeader("Authorization") String token, @PathVariable("hotelId") Long hotelId, @PathVariable("year") int year){
+    @GetMapping(value = "/statistical/chart/{year}")
+    public ResponseEntity<?> thongKeDoanhThuVeBieuDo (@RequestHeader("Authorization") String token, @PathVariable("year") int year){
         try {
             String newToken = token.substring(7);
             User director = getUserFromToken.getUserByUserNameFromJwt(newToken);
             Long directorId = director.getId();
+            List<Hotel> hotels = hotelService.findAllHotelByDirectorId(directorId);
+            List<Long> hotelIds = new ArrayList<>();
+            for(Hotel hotel : hotels){
+                hotelIds.add(hotel.getId());
+            }
+            List<List<ThongKeDoanhThuDirector>> doanhThu = new ArrayList<>();
+            for(Long hotelId : hotelIds) {
+                 doanhThu.add(bookingRoomService.thongKeDoanhThuDeVeBieuDo(hotelId, directorId, year));
+            }
 
-            List<ThongKeDoanhThuDirector> doanhThu = bookingRoomService.thongKeDoanhThuDeVeBieuDo(hotelId,directorId,year);
             return  ResponseEntity.ok().body(doanhThu);
 
         }catch (Exception e){

@@ -147,11 +147,20 @@ public class BookingRoomService {
     public  Long soDonDatPhongTrongNgay (Long directorId){
         return  bookingRoomRepository.soDonDatPhongMoiTrongNgay(directorId);
     }
+    public  Long soDonDatPhongTrongNgayHomQua (Long directorId){
+        return  bookingRoomRepository.soDonDatPhongMoiTrongNgayHomQua(directorId);
+    }
     public  Long soDonDatPhongTrongThang (Long directorId){
         return  bookingRoomRepository.soDonDatPhongTrongThang(directorId);
     }
     public  Long tongDoanhThuTrongThang (Long directorId){
         return  bookingRoomRepository.tongDoanhThuTrongThang(directorId);
+    }
+    public  Long soDonDatPhongTrongThangTruoc (Long directorId){
+        return  bookingRoomRepository.soDonDatPhongTrongThangTruoc(directorId);
+    }
+    public  Long tongDoanhThuTrongThangTruoc (Long directorId){
+        return  bookingRoomRepository.tongDoanhThuTrongThangTruoc(directorId);
     }
     // =============== từng khách sạn ==============================
     public  Long soDonDatPhongTrongNgayKS (Long directorId, Long hotelId){

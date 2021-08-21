@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.entity.User;
 import com.example.demo.entity.UserDetail;
 import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.payload.reponse.ThongKeAdminTaiKhoan2;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,5 +36,10 @@ public class UserService {
         userRepository.save(user);
         return true;
     }
+
+    public List<ThongKeAdminTaiKhoan2> thongKeTaiKhoan(int month){
+        return userRepository.thongKeTaiKhoan(month);
+    }
+
 
 }
