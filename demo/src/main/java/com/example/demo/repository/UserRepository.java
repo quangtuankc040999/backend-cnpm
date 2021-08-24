@@ -1,6 +1,8 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.User;
+import com.example.demo.payload.reponse.ThongKeAdminTaiKhoan;
+import com.example.demo.payload.reponse.ThongKeAdminTaiKhoan2;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,6 +20,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     public List<User> findDirectorActiveFalse ();
 
 
+    @Query(value = "SELECT count(user.id) as number, role.name  as roleName FROM user \n" +
+            "join user_detail on user.id = user_detail.user_id \n" +
+            "join user_roles on user.id = user_roles.user_id \n" +
+            "join role on role.id = user_roles.role_id \n" +
+            "where month(time_sign_up) = ?\n" +
+            "group by role_id;", nativeQuery = true)
+    public  List<ThongKeAdminTaiKhoan2> thongKeTaiKhoan(int month);
 
 
 
