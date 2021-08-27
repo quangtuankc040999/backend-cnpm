@@ -46,7 +46,7 @@ public class UserManagerController {
         }catch (UserNotFoundException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't find this account on database", e);
         }
-        return  ResponseEntity.badRequest().body(new MessageResponse("Done unlock"));
+        return  ResponseEntity.ok().body(new MessageResponse("Done unlock"));
     }
 
     // API get toan bộ khách sạn chưa active

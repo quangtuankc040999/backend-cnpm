@@ -170,7 +170,7 @@ public class HomeController {
             // Send the email
             emailSenderService.sendEmail(mailMessage);
 //            try {
-//                emailSenderService.sendSimpleMessage(email, confirmationToken.toString());
+////                emailSenderService.sendSimpleMessage(email, confirmationToken.toString());
 //            } catch (UnirestException e) {
 //                e.printStackTrace();
 //            }

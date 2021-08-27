@@ -173,7 +173,7 @@ public class BookingRoomService {
         return  bookingRoomRepository.tongDoanhThuTrongThangKS(directorId, hotelId);
     }
 
-    public  List<ThongKeDoanhThuDirector> thongKeDoanhThuDeVeBieuDo (Long hotelId, Long directorId, int year){
-        return bookingRoomRepository.thongKeDoanhThuDeVeBieuDo(hotelId,directorId,year);
+    public  List<ThongKeDoanhThuDirector> thongKeDoanhThuDeVeBieuDo (Long directorId,int month, int year){
+        return bookingRoomRepository.thongKeDoanhThuDeVeBieuDo(directorId,month,year);
     }
 }

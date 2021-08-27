@@ -28,8 +28,8 @@ public class EmailSenderService {
     }
 
 
-    @Async
-    public void sendSimpleMessage(String email, String token) throws UnirestException {
+
+    public JsonNode sendSimpleMessage(String email, String token) throws UnirestException {
         HttpResponse<JsonNode> request = Unirest.post("https://api.mailgun.net/v3/" + YOUR_DOMAIN_NAME + "/messages")
 			    .basicAuth("api", API_KEY)
                 .field("from", "Excited User <bookinghotelcnpm2021@gmail.com>")
@@ -37,6 +37,7 @@ public class EmailSenderService {
                 .field("subject", "Token reset password")
                 .field("text", "CODE: "+token+"")
                 .asJson();
+        return request.getBody();
     }
 
 }

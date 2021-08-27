@@ -193,7 +193,7 @@ public class DirectorController {
         return ResponseEntity.ok().body(roomService.getRoomById(roomId, hotelId));
     }
     @Transactional
-    @PostMapping(value = "/hotel//update")
+    @PostMapping(value = "/hotel/{hotelId}/{roomId}/update")
     public ResponseEntity<?> SaveUpdateRoom(@RequestParam("roomRequest") String jsonRoom, @PathVariable("hotelId") Long hotelId,@PathVariable("roomId") Long roomId, @RequestParam(required = false, name = "images") List<String> images ) {
         try {
             Gson gson = new Gson();
@@ -444,18 +444,19 @@ public class DirectorController {
             String newToken = token.substring(7);
             User director = getUserFromToken.getUserByUserNameFromJwt(newToken);
             Long directorId = director.getId();
-            List<Hotel> hotels = hotelService.findAllHotelByDirectorId(directorId);
-            List<Long> hotelIds = new ArrayList<>();
-            for(Hotel hotel : hotels){
-                hotelIds.add(hotel.getId());
-            }
-            List<List<ThongKeDoanhThuDirector>> doanhThu = new ArrayList<>();
-            for(Long hotelId : hotelIds) {
-                 doanhThu.add(bookingRoomService.thongKeDoanhThuDeVeBieuDo(hotelId, directorId, year));
-            }
 
-            return  ResponseEntity.ok().body(doanhThu);
-
+            List<Integer> months = new ArrayList<>();
+            for(int i = 1 ; i <= 12; i++){
+                months.add(i);
+            }
+            List<ThongKeDoanhThuDirector2> thongKe = new ArrayList<>();
+            for(Integer i : months){
+                    ThongKeDoanhThuDirector2 thongKeDoanhThu = new ThongKeDoanhThuDirector2();
+                    thongKeDoanhThu.setMonth(i);
+                    thongKeDoanhThu.setThongKe(bookingRoomService.thongKeDoanhThuDeVeBieuDo(directorId,i,year));
+                    thongKe.add(thongKeDoanhThu);
+            }
+            return  ResponseEntity.ok().body(thongKe);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

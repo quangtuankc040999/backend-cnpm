@@ -236,15 +236,14 @@ public interface BookingRoomRepository  extends JpaRepository<BookingRoom, Long>
 
 
     // ======================== THỐNG KÊ DOANH THU ĐỂ VEX BIỂU ĐỒ ===========================================
-    @Query(value = "select month(start) as month, hotel.name as hotelName, province, sum( (datediff(end,start)+1)*room.price) as totalInMonth, count(booking_room.id) as numberBookingInMonth\n" +
-            "from booking_room \n" +
+    @Query(value = "select  hotel.id as hotelId, hotel.name as hotelName, sum( (datediff(end,start)+1)*room.price) as totalInMonth\n" +
+            "from booking_room\n" +
             "join room on booking_room.room_id = room.id\n" +
             "join hotel on room.hotel_id = hotel.id\n" +
             "join localization on hotel.id = localization.hotel_id\n" +
-            "where hotel.id = ? and hotel.h_owner_id = ? and year(start) = ? and (status = \"using\" or status = \"accepted\" or status = \"complete\")\n" +
-            "group by month(start)\n" +
-            "ORDER BY month DESC;", nativeQuery = true)
-    List<ThongKeDoanhThuDirector> thongKeDoanhThuDeVeBieuDo(Long hotelId, Long directorId, int year);
+            "where hotel.h_owner_id = ? and month(start) = ? and year(start) = ? and (status = \"using\" or status = \"accepted\" or status = \"complete\")\n" +
+            "group by hotel.id", nativeQuery = true)
+    List<ThongKeDoanhThuDirector> thongKeDoanhThuDeVeBieuDo( Long directorId,int month, int year);
 
 
 
